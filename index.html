@@ -5,8 +5,46 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Seoulmate — Find people like you</title>
   <link rel="stylesheet" href="css/styles.css" />
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&display=swap" rel="stylesheet" />
+  <style>
+    body {
+      font-family: 'Nunito', sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+
+    nav a {
+      margin-right: 10px;
+      text-decoration: none;
+      color: #333;
+    }
+
+    .section {
+      display: none;
+      padding: 20px;
+    }
+
+    .section.active {
+      display: block;
+    }
+
+    .post img {
+      max-width: 200px;
+      display: block;
+      margin-top: 10px;
+    }
+
+    #chatBox {
+      border: 1px solid #ccc;
+      padding: 10px;
+      min-height: 100px;
+      margin-bottom: 10px;
+    }
+
+    #chat input, #chat button {
+      margin-top: 10px;
+    }
+  </style>
 </head>
 <body>
 
@@ -16,16 +54,16 @@
   </header>
 
   <nav>
-    <a href="#" id="accueil-link">Accueil</a>
-    <a href="#" id="fonctionnalites-link">Fonctionnalités</a>
-    <a href="#" id="evenements-link">Événements</a>
-    <a href="#" id="shop-link">Shop</a>
-    <a href="#" id="connexion-link">Connexion</a>
-<a href="chat.html">Chat</a>
+    <a href="#accueil">Accueil</a>
+    <a href="#fonctionnalites">Fonctionnalités</a>
+    <a href="#evenements">Événements</a>
+    <a href="#shop">Shop</a>
+    <a href="#connexion">Connexion</a>
+    <a href="#chat">Chat</a>
   </nav>
 
   <main>
-    <!-- Section Accueil -->
+    <!-- Accueil -->
     <section id="accueil" class="section active">
       <h2>Un rêve devenu réalité</h2>
       <p>
@@ -34,51 +72,52 @@
       </p>
     </section>
 
-    <!-- Section Fonctionnalités -->
+    <!-- Fonctionnalités -->
     <section id="fonctionnalites" class="section">
       <h2>Les fonctionnalités de Seoulmate</h2>
       <p>Découvrez ce que Seoulmate a à offrir !</p>
     </section>
 
-    <!-- Section Événements -->
+    <!-- Événements -->
     <section id="evenements" class="section">
       <h2>Événements à venir</h2>
       <p>Restez à jour avec nos événements à ne pas manquer.</p>
     </section>
 
-    <!-- Section Shop -->
+    <!-- Shop -->
     <section id="shop" class="section">
       <h2>Shop</h2>
       <p>Découvrez nos produits inspirés de la K-Culture.</p>
     </section>
 
-    <!-- Section Connexion -->
+    <!-- Connexion -->
     <section id="connexion" class="section">
-      <h2>Connexion</h2>
-      <p>Connectez-vous pour interagir avec d'autres utilisateurs.</p>
+      <h2>Connexion / Inscription</h2>
+      <div id="auth">
+        <input type="email" id="email" placeholder="Email" required /><br>
+        <input type="password" id="password" placeholder="Mot de passe" required /><br>
+        <button onclick="login()">Se connecter</button>
+        <button onclick="signup()">S'inscrire</button>
+        <p id="auth-message"></p>
+      </div>
     </section>
 
-    <!-- Section pour publier des posts -->
-    <section id="publication">
-      <h3>Publier un Post</h3>
+    <!-- Publication -->
+    <section id="publication" class="section">
+      <h2>Publier un Post</h2>
       <form id="postForm">
         <input type="file" id="postImage" accept="image/*" required />
         <textarea id="postCaption" placeholder="Ajoutez une légende..." required></textarea>
         <button type="submit">Publier</button>
       </form>
-    </section>
-
-    <!-- Zone pour afficher les posts -->
-    <section id="posts">
-      <h3>Derniers posts</h3>
       <div id="postsList"></div>
     </section>
 
-    <!-- Section Chat -->
-    <section id="chat">
-      <h3>Discuter avec d'autres utilisateurs</h3>
+    <!-- Chat -->
+    <section id="chat" class="section">
+      <h2>Chat</h2>
       <div id="chatBox"></div>
-      <input type="text" id="messageInput" placeholder="Tapez un message..." />
+      <input type="text" id="messageInput" placeholder="Tape ton message..." />
       <button onclick="sendMessage()">Envoyer</button>
     </section>
   </main>
@@ -87,6 +126,75 @@
     <p>&copy; 2025 Seoulmate — Créé avec amour 💖</p>
   </footer>
 
-  <script src="js/script.js"></script>
+  <script>
+    // -------------------- NAVIGATION ENTRE SECTIONS --------------------
+    document.addEventListener("DOMContentLoaded", () => {
+      const sections = document.querySelectorAll(".section");
+      const links = document.querySelectorAll("nav a");
+
+      links.forEach(link => {
+        link.addEventListener("click", (e) => {
+          e.preventDefault();
+          const href = link.getAttribute("href");
+          const targetId = href.startsWith("#") ? href.slice(1) : null;
+
+          if (targetId) {
+            sections.forEach(section => section.classList.remove("active"));
+            const targetSection = document.getElementById(targetId);
+            if (targetSection) {
+              targetSection.classList.add("active");
+            }
+          }
+        });
+      });
+    });
+
+    // -------------------- PUBLICATION DE POST --------------------
+    document.getElementById("postForm")?.addEventListener("submit", function(e) {
+      e.preventDefault();
+
+      const imageFile = document.getElementById("postImage").files[0];
+      const caption = document.getElementById("postCaption").value;
+
+      const postHtml = `
+        <div class="post">
+          <img src="${URL.createObjectURL(imageFile)}" alt="Post Image" />
+          <p>${caption}</p>
+        </div>
+      `;
+
+      document.getElementById("postsList").innerHTML += postHtml;
+      document.getElementById("postForm").reset();
+    });
+
+    // -------------------- CHAT --------------------
+    let messages = [];
+
+    function sendMessage() {
+      const message = document.getElementById("messageInput").value;
+      if (message) {
+        messages.push(message);
+        updateChat();
+        document.getElementById("messageInput").value = "";
+      }
+    }
+
+    function updateChat() {
+      const chatBox = document.getElementById("chatBox");
+      chatBox.innerHTML = messages.map(msg => `<p>${msg}</p>`).join('');
+    }
+
+    // -------------------- AUTH (MAQUETTE) --------------------
+    function login() {
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+      document.getElementById("auth-message").innerText = `Connecté avec ${email}`;
+    }
+
+    function signup() {
+      const email = document.getElementById("email").value;
+      document.getElementById("auth-message").innerText = `Compte créé pour ${email}`;
+    }
+  </script>
 </body>
 </html>
