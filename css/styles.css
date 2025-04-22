@@ -1,58 +1,69 @@
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: 'Segoe UI', sans-serif;
-}
-
+/* styles.css */
 body {
-  background: linear-gradient(to right, #ffdee9, #b5fffc);
+  margin: 0;
+  font-family: 'Nunito', sans-serif;
+  background: #fff0f5;
   color: #333;
-  line-height: 1.6;
-  padding: 20px;
 }
 
 header {
+  background: #ffc0cb;
   text-align: center;
-  margin-bottom: 2rem;
-}
-
-h1 {
-  font-size: 3rem;
-  color: #ff69b4;
+  padding: 2rem 1rem;
 }
 
 .slogan {
   font-style: italic;
-  color: #888;
-  margin-top: 10px;
+  font-size: 1.2rem;
 }
 
-.intro {
-  background: white;
+nav {
+  background: #fff;
+  text-align: center;
+  padding: 1rem;
+}
+
+nav a {
+  margin: 0 1rem;
+  text-decoration: none;
+  color: #e91e63;
+  font-weight: bold;
+}
+
+.section {
+  display: none;
+}
+
+.section.active {
+  display: block;
+}
+
+main {
   padding: 2rem;
-  border-radius: 20px;
-  margin-bottom: 2rem;
-  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-}
-
-.features {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 20px;
-}
-
-.feature {
-  background: #fff6fb;
-  border-left: 5px solid #ff69b4;
-  padding: 1.5rem;
-  border-radius: 15px;
 }
 
 footer {
   text-align: center;
+  padding: 1rem;
+  background: #f8bbd0;
   margin-top: 2rem;
-  color: #555;
 }
 
+textarea {
+  width: 100%;
+  padding: 0.5rem;
+  margin: 1rem 0;
+}
+
+button {
+  background-color: #e91e63;
+  color: white;
+  padding: 0.7rem 1rem;
+  border: none;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #c2185b;
+}
 
