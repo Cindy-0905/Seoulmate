@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fandom</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <header>
+    <h1>Fandom</h1>
+    <nav>
+      <ul>
+        <li><a href="index.html">Accueil</a></li>
+        <li><a href="discover.html">Découvrir</a></li>
+        <li><a href="chat.html">SeoulChat</a></li>
+        <li><a href="profile.html">Profil</a></li>
+        <li><a href="signup.html">Connexion / Inscription</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <section id="fandoms">
+    <h2>Explorez les fandoms</h2>
+    <div class="fandom">
+      <img src="img/bts.jpg" alt="BTS">
+      <h3>BTS</h3>
+      <p>Description de BTS...</p>
+    </div>
+    <div class="fandom">
+      <img src="img/blackpink.jpg" alt="Blackpink">
+      <h3>Blackpink</h3>
+      <p>Description de Blackpink...</p>
+    </div>
+  </section>
+
+  <footer>
+    <p>&copy; 2025 Seoulspace. Tous droits réservés.</p>
+  </footer>
+</body>
+</html>
