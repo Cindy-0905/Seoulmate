@@ -217,4 +217,56 @@
     }
   </script>
 </body>
+  // -------------------- PROFIL --------------------
+function saveProfile() {
+  const desc = document.getElementById("profileDesc").value;
+  const bts = document.getElementById("badgeBTS").checked;
+  const bp = document.getElementById("badgeBLACKPINK").checked;
+  const skz = document.getElementById("badgeStrayKids").checked;
+  const picFile = document.getElementById("profilePicInput").files[0];
+
+  const reader = new FileReader();
+  reader.onload = function (e) {
+    const picData = e.target.result;
+
+    localStorage.setItem("profile", JSON.stringify({
+      desc,
+      bts,
+      bp,
+      skz,
+      pic: picData
+    }));
+
+    document.getElementById("profileSavedMsg").innerText = "Profil sauvegardé ✅";
+    loadProfile(); // pour recharger l'affichage
+  };
+
+  if (picFile) {
+    reader.readAsDataURL(picFile);
+  } else {
+    const existing = JSON.parse(localStorage.getItem("profile") || "{}");
+    localStorage.setItem("profile", JSON.stringify({
+      desc,
+      bts,
+      bp,
+      skz,
+      pic: existing.pic || ""
+    }));
+    document.getElementById("profileSavedMsg").innerText = "Profil sauvegardé ✅";
+    loadProfile();
+  }
+}
+
+function loadProfile() {
+  const data = JSON.parse(localStorage.getItem("profile") || "{}");
+  if (data.desc) document.getElementById("profileDesc").value = data.desc;
+  if (data.pic) document.getElementById("profilePicPreview").src = data.pic;
+  document.getElementById("badgeBTS").checked = data.bts || false;
+  document.getElementById("badgeBLACKPINK").checked = data.bp || false;
+  document.getElementById("badgeStrayKids").checked = data.skz || false;
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  loadProfile();
+});
 </html>
