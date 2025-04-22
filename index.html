@@ -31,11 +31,18 @@
     #profilePicPreview {
       max-width: 200px;
       margin-top: 10px;
+      display: none; /* Caché par défaut */
     }
 
     #profileSavedMsg {
       color: green;
       margin-top: 10px;
+    }
+
+    footer {
+      text-align: center;
+      padding: 10px;
+      background-color: #f1f1f1;
     }
   </style>
 </head>
@@ -50,14 +57,14 @@
     <a href="#accueil">Accueil</a>
     <a href="#profil">Mon Profil</a>
     <a href="#chat">Chat</a>
-     <a href="#connexion">Connexion</a>
-     <a href="#fonctionnalites">Fonctionnalités</a>
+    <a href="#connexion">Connexion</a>
+    <a href="#fonctionnalites">Fonctionnalités</a>
     <a href="#evenements">Événements</a>
   </nav>
 
   <main>
     <!-- Profil -->
-    <section id="profil" class="section">
+    <section id="profil" class="section active">
       <h2>Mon Profil</h2>
       
       <!-- Description -->
@@ -74,7 +81,7 @@
       <!-- Photo de profil -->
       <label for="profilePicInput">Photo de Profil</label>
       <input type="file" id="profilePicInput" accept="image/*">
-      <img id="profilePicPreview" src="" alt="Aperçu de la photo" style="max-width: 200px; margin-top: 10px;">
+      <img id="profilePicPreview" src="" alt="Aperçu de la photo">
 
       <!-- Message de confirmation -->
       <p id="profileSavedMsg"></p>
@@ -82,6 +89,15 @@
       <!-- Sauvegarder le profil -->
       <button onclick="saveProfile()">Sauvegarder</button>
     </section>
+
+    <!-- Accueil -->
+    <section id="accueil" class="section">
+      <h2>Un rêve devenu réalité</h2>
+      <p>Depuis longtemps, je rêvais d’un espace où l’on peut se retrouver...</p>
+    </section>
+
+    <!-- Autres sections -->
+    <!-- Ajoute ici tes autres sections (chat, événements, etc.) -->
 
   </main>
 
@@ -101,16 +117,15 @@
 
       reader.onload = function (e) {
         const picData = e.target.result;
-        // Sauvegarde dans localStorage
         localStorage.setItem("profile", JSON.stringify({ desc, bts, bp, skz, pic: picData }));
         document.getElementById("profileSavedMsg").innerText = "Profil sauvegardé ✅";
-        loadProfile(); // pour recharger l'affichage
+        loadProfile(); // Recharger l'affichage
       };
 
       if (picFile) {
         reader.readAsDataURL(picFile);
+        document.getElementById("profilePicPreview").style.display = "block"; // Afficher l'aperçu de l'image
       } else {
-        // Si pas de photo, récupérer celle qui existe déjà ou vide
         const existing = JSON.parse(localStorage.getItem("profile") || "{}");
         localStorage.setItem("profile", JSON.stringify({ desc, bts, bp, skz, pic: existing.pic || "" }));
         document.getElementById("profileSavedMsg").innerText = "Profil sauvegardé ✅";
@@ -121,8 +136,16 @@
     function loadProfile() {
       const data = JSON.parse(localStorage.getItem("profile") || "{}");
 
+      // Charger la description
       if (data.desc) document.getElementById("profileDesc").value = data.desc;
-      if (data.pic) document.getElementById("profilePicPreview").src = data.pic;
+
+      // Charger la photo de profil
+      if (data.pic) {
+        document.getElementById("profilePicPreview").src = data.pic;
+        document.getElementById("profilePicPreview").style.display = "block"; // Afficher l'image
+      }
+
+      // Charger les badges
       document.getElementById("badgeBTS").checked = data.bts || false;
       document.getElementById("badgeBLACKPINK").checked = data.bp || false;
       document.getElementById("badgeStrayKids").checked = data.skz || false;
@@ -130,6 +153,28 @@
 
     document.addEventListener("DOMContentLoaded", () => {
       loadProfile(); // Charger les données du profil lorsque la page est prête
+    });
+
+    // -------------------- NAVIGATION ENTRE LES SECTIONS --------------------
+    document.addEventListener("DOMContentLoaded", () => {
+      const sections = document.querySelectorAll(".section");
+      const links = document.querySelectorAll("nav a");
+
+      links.forEach(link => {
+        link.addEventListener("click", (e) => {
+          e.preventDefault();
+          const href = link.getAttribute("href");
+          const targetId = href.startsWith("#") ? href.slice(1) : null;
+
+          if (targetId) {
+            sections.forEach(section => section.classList.remove("active"));
+            const targetSection = document.getElementById(targetId);
+            if (targetSection) {
+              targetSection.classList.add("active");
+            }
+          }
+        });
+      });
     });
   </script>
 </body>
