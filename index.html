@@ -12,19 +12,11 @@
       margin: 0;
       padding: 0;
     }
-    nav {
-      background: #f2f2f2;
-      padding: 10px;
-    }
     nav a {
       margin-right: 10px;
       text-decoration: none;
       color: #333;
       cursor: pointer;
-      font-weight: bold;
-    }
-    nav a:hover {
-      color: #e91e63;
     }
     .section {
       display: none;
@@ -46,6 +38,7 @@
       padding: 10px;
       min-height: 100px;
       margin-bottom: 10px;
+      background: #f9f9f9;
     }
   </style>
 </head>
@@ -66,16 +59,14 @@
   </nav>
 
   <main>
-    <!-- Accueil -->
     <section id="accueil" class="section active">
       <h2>Bienvenue sur Seoulmate</h2>
       <p>La plateforme qui connecte les fans de K-culture !</p>
     </section>
 
-    <!-- Profil -->
     <section id="profil" class="section">
       <h2>Mon Profil</h2>
-      <label for="profileDesc">Description</label>
+      <label for="profileDesc">Description</label><br>
       <textarea id="profileDesc" placeholder="Ajoutez une description..."></textarea>
       <div>
         <label><input type="checkbox" id="badgeBTS"> Fan de BTS</label><br>
@@ -89,7 +80,6 @@
       <button onclick="saveProfile()">Sauvegarder</button>
     </section>
 
-    <!-- Chat -->
     <section id="chat" class="section">
       <h2>Chat public</h2>
       <div id="chatBox"></div>
@@ -97,7 +87,6 @@
       <button onclick="sendMessage()">Envoyer</button>
     </section>
 
-    <!-- Connexion -->
     <section id="connexion" class="section">
       <h2>Connexion / Inscription</h2>
       <input type="email" id="email" placeholder="Email" /><br>
@@ -107,7 +96,6 @@
       <p id="auth-message"></p>
     </section>
 
-    <!-- Fonctionnalités -->
     <section id="fonctionnalites" class="section">
       <h2>Fonctionnalités</h2>
       <ul>
@@ -119,13 +107,11 @@
       </ul>
     </section>
 
-    <!-- Événements -->
     <section id="evenements" class="section">
       <h2>Événements à venir</h2>
       <p>Notez vos meet-ups et concerts ici !</p>
     </section>
 
-    <!-- Shop -->
     <section id="shop" class="section">
       <h2>Shop K-pop</h2>
       <p>Affichez vos produits favoris ici !</p>
@@ -136,10 +122,11 @@
     <p>&copy; 2025 Seoulmate — Créé avec amour 💖</p>
   </footer>
 
-  <!-- Firebase Script -->
-  <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth.js"></script>
+  <!-- Firebase compat scripts -->
+  <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth-compat.js"></script>
   <script>
+    // Configuration Firebase
     const firebaseConfig = {
       apiKey: "AIzaSyBlWL7pLWVIXhmLP-b3dTOmbxEwAyWvhto",
       authDomain: "seoulmate-d34c2.firebaseapp.com",
@@ -150,7 +137,7 @@
       measurementId: "G-8MV4ZWQ8SF"
     };
 
-    const app = firebase.initializeApp(firebaseConfig);
+    firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
 
     function saveProfile() {
@@ -187,11 +174,13 @@
       document.getElementById("badgeStrayKids").checked = data.skz || false;
     }
 
-    let messages = [];
+    let messages = JSON.parse(localStorage.getItem("chatMessages") || "[]");
+
     function sendMessage() {
-      const message = document.getElementById("messageInput").value;
+      const message = document.getElementById("messageInput").value.trim();
       if (message) {
         messages.push(message);
+        localStorage.setItem("chatMessages", JSON.stringify(messages));
         updateChat();
         document.getElementById("messageInput").value = "";
       }
@@ -230,6 +219,8 @@
 
     document.addEventListener("DOMContentLoaded", () => {
       loadProfile();
+      updateChat();
+
       const sections = document.querySelectorAll(".section");
       const links = document.querySelectorAll("nav a");
 
@@ -237,16 +228,12 @@
         link.addEventListener("click", (e) => {
           e.preventDefault();
           const targetId = link.getAttribute("href").substring(1);
-          const targetSection = document.getElementById(targetId);
 
-          if (targetSection) {
-            sections.forEach(sec => sec.classList.remove("active"));
-            targetSection.classList.add("active");
-          }
+          sections.forEach(sec => sec.classList.remove("active"));
+          document.getElementById(targetId).classList.add("active");
         });
       });
     });
   </script>
 </body>
 </html>
-
