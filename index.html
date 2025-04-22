@@ -7,58 +7,6 @@
   <link rel="stylesheet" href="css/styles.css" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&display=swap" rel="stylesheet">
-  <style>
-    body {
-      margin: 0;
-      font-family: 'Nunito', sans-serif;
-      background: #fff0f5;
-      color: #333;
-    }
-    header {
-      background: #ffc0cb;
-      text-align: center;
-      padding: 2rem 1rem;
-    }
-    .slogan {
-      font-style: italic;
-      font-size: 1.2rem;
-    }
-    nav {
-      background: #fff;
-      text-align: center;
-      padding: 1rem;
-    }
-    nav a {
-      margin: 0 1rem;
-      text-decoration: none;
-      color: #e91e63;
-      font-weight: bold;
-    }
-    .intro, .features {
-      max-width: 800px;
-      margin: 2rem auto;
-      padding: 0 1rem;
-    }
-    .features {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 1rem;
-      justify-content: center;
-    }
-    .feature {
-      background: #ffe4e1;
-      padding: 1.5rem;
-      border-radius: 12px;
-      flex: 1 1 250px;
-      text-align: center;
-    }
-    footer {
-      text-align: center;
-      padding: 1rem;
-      background: #f8bbd0;
-      margin-top: 2rem;
-    }
-  </style>
 </head>
 <body>
 
@@ -68,15 +16,16 @@
   </header>
 
   <nav>
-    <a href="#">Accueil</a>
-    <a href="#">Fonctionnalités</a>
-    <a href="#">Événements</a>
-    <a href="#">Shop</a>
-    <a href="#">Connexion</a>
+    <a href="#" id="accueil-link">Accueil</a>
+    <a href="#" id="fonctionnalites-link">Fonctionnalités</a>
+    <a href="#" id="evenements-link">Événements</a>
+    <a href="#" id="shop-link">Shop</a>
+    <a href="#" id="connexion-link">Connexion</a>
   </nav>
 
   <main>
-    <section class="intro">
+    <!-- Section Accueil -->
+    <section id="accueil" class="section active">
       <h2>Un rêve devenu réalité</h2>
       <p>
         Depuis longtemps, je rêvais d’un espace où l’on peut se retrouver, se comprendre, et vibrer autour d’une même passion.<br>
@@ -84,19 +33,52 @@
       </p>
     </section>
 
-    <section class="features">
-      <div class="feature">
-        <h3>✨ Matching personnalisé</h3>
-        <p>Des profils compatibles selon tes passions et ton énergie.</p>
-      </div>
-      <div class="feature">
-        <h3>💬 Chat sécurisé</h3>
-        <p>Discute librement, sans jugement. Tout est protégé.</p>
-      </div>
-      <div class="feature">
-        <h3>📸 Partage de photos</h3>
-        <p>Exprime-toi à travers les couleurs, les selfies et la créativité.</p>
-      </div>
+    <!-- Section Fonctionnalités -->
+    <section id="fonctionnalites" class="section">
+      <h2>Les fonctionnalités de Seoulmate</h2>
+      <p>Découvrez ce que Seoulmate a à offrir !</p>
+    </section>
+
+    <!-- Section Événements -->
+    <section id="evenements" class="section">
+      <h2>Événements à venir</h2>
+      <p>Restez à jour avec nos événements à ne pas manquer.</p>
+    </section>
+
+    <!-- Section Shop -->
+    <section id="shop" class="section">
+      <h2>Shop</h2>
+      <p>Découvrez nos produits inspirés de la K-Culture.</p>
+    </section>
+
+    <!-- Section Connexion -->
+    <section id="connexion" class="section">
+      <h2>Connexion</h2>
+      <p>Connectez-vous pour interagir avec d'autres utilisateurs.</p>
+    </section>
+
+    <!-- Section pour publier des posts -->
+    <section id="publication">
+      <h3>Publier un Post</h3>
+      <form id="postForm">
+        <input type="file" id="postImage" accept="image/*" required />
+        <textarea id="postCaption" placeholder="Ajoutez une légende..." required></textarea>
+        <button type="submit">Publier</button>
+      </form>
+    </section>
+
+    <!-- Zone pour afficher les posts -->
+    <section id="posts">
+      <h3>Derniers posts</h3>
+      <div id="postsList"></div>
+    </section>
+
+    <!-- Section Chat -->
+    <section id="chat">
+      <h3>Discuter avec d'autres utilisateurs</h3>
+      <div id="chatBox"></div>
+      <input type="text" id="messageInput" placeholder="Tapez un message..." />
+      <button onclick="sendMessage()">Envoyer</button>
     </section>
   </main>
 
@@ -104,6 +86,6 @@
     <p>&copy; 2025 Seoulmate — Créé avec amour 💖</p>
   </footer>
 
-  <script src="script.js"></script>
+  <script src="js/script.js"></script>
 </body>
 </html>
