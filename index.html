@@ -16,7 +16,6 @@
       margin-right: 10px;
       text-decoration: none;
       color: #333;
-      cursor: pointer;
     }
     .section {
       display: none;
@@ -38,7 +37,9 @@
       padding: 10px;
       min-height: 100px;
       margin-bottom: 10px;
-      background: #f9f9f9;
+    }
+    button {
+      margin-top: 10px;
     }
   </style>
 </head>
@@ -52,6 +53,7 @@
     <a href="#accueil">Accueil</a>
     <a href="#profil">Mon Profil</a>
     <a href="#chat">Chat</a>
+    <a href="#quiz">Quiz</a>
     <a href="#connexion">Connexion</a>
     <a href="#fonctionnalites">Fonctionnalités</a>
     <a href="#evenements">Événements</a>
@@ -66,7 +68,7 @@
 
     <section id="profil" class="section">
       <h2>Mon Profil</h2>
-      <label for="profileDesc">Description</label><br>
+      <label for="profileDesc">Description</label>
       <textarea id="profileDesc" placeholder="Ajoutez une description..."></textarea>
       <div>
         <label><input type="checkbox" id="badgeBTS"> Fan de BTS</label><br>
@@ -85,6 +87,16 @@
       <div id="chatBox"></div>
       <input type="text" id="messageInput" placeholder="Tape ton message..." />
       <button onclick="sendMessage()">Envoyer</button>
+    </section>
+
+    <section id="quiz" class="section">
+      <h2>Quiz K-pop</h2>
+      <div id="quizContainer">
+        <p id="quizQuestion"></p>
+        <div id="quizOptions"></div>
+        <button onclick="nextQuestion()">Question Suivante</button>
+        <p id="quizResult"></p>
+      </div>
     </section>
 
     <section id="connexion" class="section">
@@ -122,22 +134,20 @@
     <p>&copy; 2025 Seoulmate — Créé avec amour 💖</p>
   </footer>
 
-  <!-- Firebase compat scripts -->
-  <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth.js"></script>
   <script>
-    // Configuration Firebase
     const firebaseConfig = {
       apiKey: "AIzaSyBlWL7pLWVIXhmLP-b3dTOmbxEwAyWvhto",
       authDomain: "seoulmate-d34c2.firebaseapp.com",
       projectId: "seoulmate-d34c2",
-      storageBucket: "seoulmate-d34c2.appspot.com",
+      storageBucket: "seoulmate-d34c2.firebasestorage.app",
       messagingSenderId: "570003400199",
       appId: "1:570003400199:web:08cfd5b4f6fa82b2ea6ca2",
       measurementId: "G-8MV4ZWQ8SF"
     };
 
-    firebase.initializeApp(firebaseConfig);
+    const app = firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
 
     function saveProfile() {
@@ -174,61 +184,113 @@
       document.getElementById("badgeStrayKids").checked = data.skz || false;
     }
 
-    let messages = JSON.parse(localStorage.getItem("chatMessages") || "[]");
+    let messages = [];
+    const bannedWords = ["con", "pute", "merde", "enculé", "fuck", "shit", "salopard"];
+
+    function filterBadWords(msg) {
+      return msg
+        .split(" ")
+        .map(word => bannedWords.includes(word.toLowerCase()) ? "***" : word)
+        .join(" ");
+    }
 
     function sendMessage() {
-      const message = document.getElementById("messageInput").value.trim();
+      const input = document.getElementById("messageInput");
+      const message = input.value.trim();
       if (message) {
-        messages.push(message);
-        localStorage.setItem("chatMessages", JSON.stringify(messages));
+        messages.push(filterBadWords(message));
         updateChat();
-        document.getElementById("messageInput").value = "";
+        input.value = "";
       }
     }
 
     function updateChat() {
-      const chatBox = document.getElementById("chatBox");
-      chatBox.innerHTML = messages.map(msg => `<p>${msg}</p>`).join('');
+      document.getElementById("chatBox").innerHTML = messages.map(m => `<p>${m}</p>`).join("");
     }
 
     function login() {
       const email = document.getElementById("email").value;
       const password = document.getElementById("password").value;
-
       auth.signInWithEmailAndPassword(email, password)
-        .then(() => {
-          document.getElementById("auth-message").innerText = `Connecté avec ${email}`;
-        })
-        .catch((error) => {
-          document.getElementById("auth-message").innerText = error.message;
-        });
+        .then(() => document.getElementById("auth-message").innerText = `Connecté avec ${email}`)
+        .catch((e) => document.getElementById("auth-message").innerText = e.message);
     }
 
     function signup() {
       const email = document.getElementById("email").value;
       const password = document.getElementById("password").value;
-
       auth.createUserWithEmailAndPassword(email, password)
-        .then(() => {
-          document.getElementById("auth-message").innerText = `Compte créé pour ${email}`;
-        })
-        .catch((error) => {
-          document.getElementById("auth-message").innerText = error.message;
-        });
+        .then(() => document.getElementById("auth-message").innerText = `Compte créé pour ${email}`)
+        .catch((e) => document.getElementById("auth-message").innerText = e.message);
+    }
+
+    const quizData = [
+      {
+        question: "Quel groupe a sorti 'Dynamite' ?",
+        options: ["EXO", "BTS", "TWICE", "ATEEZ"],
+        answer: "BTS"
+      },
+      {
+        question: "Quel est le nom du fandom de BLACKPINK ?",
+        options: ["BLINK", "ARMY", "ONCE", "STAY"],
+        answer: "BLINK"
+      },
+      {
+        question: "Stray Kids a été formé par quel label ?",
+        options: ["SM", "JYP", "YG", "BigHit"],
+        answer: "JYP"
+      }
+    ];
+
+    let quizIndex = 0;
+    let score = 0;
+
+    function loadQuestion() {
+      const q = quizData[quizIndex];
+      document.getElementById("quizQuestion").innerText = q.question;
+      const container = document.getElementById("quizOptions");
+      container.innerHTML = "";
+      q.options.forEach(opt => {
+        const btn = document.createElement("button");
+        btn.textContent = opt;
+        btn.onclick = () => checkAnswer(opt);
+        container.appendChild(btn);
+      });
+    }
+
+    function checkAnswer(opt) {
+      if (opt === quizData[quizIndex].answer) score++;
+      quizIndex++;
+      if (quizIndex < quizData.length) {
+        loadQuestion();
+      } else {
+        showResult();
+      }
+    }
+
+    function nextQuestion() {
+      if (quizIndex < quizData.length) loadQuestion();
+    }
+
+    function showResult() {
+      let msg = "";
+      if (score === 3) msg = "✨ Ultra fan de K-POP ! Badge Or débloqué !";
+      else if (score === 2) msg = "💜 Fan confirmé·e ! Badge Argent débloqué !";
+      else msg = "🌱 Débutant·e ! Badge Bronze débloqué !";
+      document.getElementById("quizResult").innerText = `Score : ${score}/3\n${msg}`;
+      score = 0;
+      quizIndex = 0;
     }
 
     document.addEventListener("DOMContentLoaded", () => {
       loadProfile();
-      updateChat();
-
+      loadQuestion();
       const sections = document.querySelectorAll(".section");
       const links = document.querySelectorAll("nav a");
-
       links.forEach(link => {
         link.addEventListener("click", (e) => {
           e.preventDefault();
           const targetId = link.getAttribute("href").substring(1);
-
           sections.forEach(sec => sec.classList.remove("active"));
           document.getElementById(targetId).classList.add("active");
         });
