@@ -25,6 +25,7 @@ h1 {
 .slogan {
   font-style: italic;
   color: #888;
+  margin-top: 10px;
 }
 
 .intro {
@@ -53,3 +54,5 @@ footer {
   margin-top: 2rem;
   color: #555;
 }
+
+
