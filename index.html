@@ -38,6 +38,10 @@
       min-height: 100px;
       margin-bottom: 10px;
     }
+    .chat-message {
+      border-bottom: 1px solid #eee;
+      padding: 5px 0;
+    }
   </style>
 </head>
 <body>
@@ -145,7 +149,9 @@
     // Initialisation de Firebase
     const app = firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
+    const db = firebase.firestore();
 
+    // Fonction pour sauvegarder le profil
     function saveProfile() {
       const desc = document.getElementById("profileDesc").value;
       const bts = document.getElementById("badgeBTS").checked;
@@ -156,8 +162,8 @@
 
       reader.onload = function (e) {
         const picData = e.target.result;
-        // Sauvegarde dans localStorage
-        localStorage.setItem("profile", JSON.stringify({ desc, bts, bp, skz, pic: picData }));
+        const profileData = { desc, bts, bp, skz, pic: picData };
+        localStorage.setItem("profile", JSON.stringify(profileData));
         document.getElementById("profileSavedMsg").innerText = "Profil sauvegardé ✅";
         loadProfile();
       };
@@ -166,7 +172,8 @@
         reader.readAsDataURL(picFile);
       } else {
         const existing = JSON.parse(localStorage.getItem("profile") || "{}");
-        localStorage.setItem("profile", JSON.stringify({ desc, bts, bp, skz, pic: existing.pic || "" }));
+        const profileData = { desc, bts, bp, skz, pic: existing.pic || "" };
+        localStorage.setItem("profile", JSON.stringify(profileData));
         document.getElementById("profileSavedMsg").innerText = "Profil sauvegardé ✅";
         loadProfile();
       }
@@ -181,6 +188,7 @@
       document.getElementById("badgeStrayKids").checked = data.skz || false;
     }
 
+    // Chat
     let messages = [];
     function sendMessage() {
       const message = document.getElementById("messageInput").value;
@@ -193,9 +201,10 @@
 
     function updateChat() {
       const chatBox = document.getElementById("chatBox");
-      chatBox.innerHTML = messages.map(msg => `<p>${msg}</p>`).join('');
+      chatBox.innerHTML = messages.map(msg => `<div class="chat-message">${msg}</div>`).join('');
     }
 
+    // Connexion et Inscription
     function login() {
       const email = document.getElementById("email").value;
       const password = document.getElementById("password").value;
