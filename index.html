@@ -237,4 +237,23 @@
     }
 
     function updateChat() {
-      const chatBox = document.getElementById
+      const chatBox = document.getElementById("chatBox");
+      chatBox.innerHTML = messages.map(msg => `<p>${msg}</p>`).join('');
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      loadProfile();
+      const sections = document.querySelectorAll(".section");
+      const links = document.querySelectorAll("nav a");
+      links.forEach(link => {
+        link.addEventListener("click", (e) => {
+          e.preventDefault();
+          const targetId = link.getAttribute("href").substring(1);
+          sections.forEach(section => section.classList.remove("active"));
+          document.getElementById(targetId).classList.add("active");
+        });
+      });
+    });
+  </script>
+</body>
+</html>
