@@ -28,20 +28,13 @@
       display: block;
     }
 
-    .post img {
+    #profilePicPreview {
       max-width: 200px;
-      display: block;
       margin-top: 10px;
     }
 
-    #chatBox {
-      border: 1px solid #ccc;
-      padding: 10px;
-      min-height: 100px;
-      margin-bottom: 10px;
-    }
-
-    #chat input, #chat button {
+    #profileSavedMsg {
+      color: green;
       margin-top: 10px;
     }
   </style>
@@ -55,84 +48,38 @@
 
   <nav>
     <a href="#accueil">Accueil</a>
-    <a href="#fonctionnalites">Fonctionnalités</a>
-    <a href="#evenements">Événements</a>
-    <a href="#shop">Shop</a>
-    <a href="#connexion">Connexion</a>
+    <a href="#profil">Mon Profil</a>
     <a href="#chat">Chat</a>
-    <a href="#profil">Mon Profil</a>  <!-- Lien vers la section profil -->
   </nav>
 
   <main>
-    <!-- Accueil -->
-    <section id="accueil" class="section active">
-      <h2>Un rêve devenu réalité</h2>
-      <p>
-        Depuis longtemps, je rêvais d’un espace où l’on peut se retrouver, se comprendre, et vibrer autour d’une même passion.<br>
-        <strong>Seoulmate</strong>, c’est un lieu vrai, simple et humain, inspiré par la K-culture et le lien qu’elle crée entre nous.
-      </p>
-    </section>
-
-    <!-- Fonctionnalités -->
-    <section id="fonctionnalites" class="section">
-      <h2>Les fonctionnalités de Seoulmate</h2>
-      <p>Découvrez ce que Seoulmate a à offrir !</p>
-    </section>
-
-    <!-- Événements -->
-    <section id="evenements" class="section">
-      <h2>Événements à venir</h2>
-      <p>Restez à jour avec nos événements à ne pas manquer.</p>
-    </section>
-
-    <!-- Shop -->
-    <section id="shop" class="section">
-      <h2>Shop</h2>
-      <p>Découvrez nos produits inspirés de la K-Culture.</p>
-    </section>
-
-    <!-- Connexion -->
-    <section id="connexion" class="section">
-      <h2>Connexion / Inscription</h2>
-      <div id="auth">
-        <input type="email" id="email" placeholder="Email" required /><br>
-        <input type="password" id="password" placeholder="Mot de passe" required /><br>
-        <button onclick="login()">Se connecter</button>
-        <button onclick="signup()">S'inscrire</button>
-        <p id="auth-message"></p>
-      </div>
-    </section>
-
-    <!-- Mon Profil -->
+    <!-- Profil -->
     <section id="profil" class="section">
       <h2>Mon Profil</h2>
-      <p>Voici ton profil :</p>
-      <div id="profile-picture">
-        <!-- Ajouter l'image de profil ici -->
+      
+      <!-- Description -->
+      <label for="profileDesc">Description</label>
+      <textarea id="profileDesc" placeholder="Ajoutez une description..."></textarea>
+
+      <!-- Badges -->
+      <div>
+        <label><input type="checkbox" id="badgeBTS"> Fan de BTS</label><br>
+        <label><input type="checkbox" id="badgeBLACKPINK"> Fan de BLACKPINK</label><br>
+        <label><input type="checkbox" id="badgeStrayKids"> Fan de Stray Kids</label>
       </div>
-      <div id="profile-description">
-        <!-- Ajouter une description de profil ici -->
-      </div>
+
+      <!-- Photo de profil -->
+      <label for="profilePicInput">Photo de Profil</label>
+      <input type="file" id="profilePicInput" accept="image/*">
+      <img id="profilePicPreview" src="" alt="Aperçu de la photo" style="max-width: 200px; margin-top: 10px;">
+
+      <!-- Message de confirmation -->
+      <p id="profileSavedMsg"></p>
+
+      <!-- Sauvegarder le profil -->
+      <button onclick="saveProfile()">Sauvegarder</button>
     </section>
 
-    <!-- Publication -->
-    <section id="publication" class="section">
-      <h2>Publier un Post</h2>
-      <form id="postForm">
-        <input type="file" id="postImage" accept="image/*" required />
-        <textarea id="postCaption" placeholder="Ajoutez une légende..." required></textarea>
-        <button type="submit">Publier</button>
-      </form>
-      <div id="postsList"></div>
-    </section>
-
-    <!-- Chat -->
-    <section id="chat" class="section">
-      <h2>Chat</h2>
-      <div id="chatBox"></div>
-      <input type="text" id="messageInput" placeholder="Tape ton message..." />
-      <button onclick="sendMessage()">Envoyer</button>
-    </section>
   </main>
 
   <footer>
@@ -140,74 +87,47 @@
   </footer>
 
   <script>
-    // -------------------- NAVIGATION ENTRE SECTIONS --------------------
-    document.addEventListener("DOMContentLoaded", () => {
-      const sections = document.querySelectorAll(".section");
-      const links = document.querySelectorAll("nav a");
+    // -------------------- PROFIL --------------------
+    function saveProfile() {
+      const desc = document.getElementById("profileDesc").value;
+      const bts = document.getElementById("badgeBTS").checked;
+      const bp = document.getElementById("badgeBLACKPINK").checked;
+      const skz = document.getElementById("badgeStrayKids").checked;
+      const picFile = document.getElementById("profilePicInput").files[0];
+      const reader = new FileReader();
 
-      links.forEach(link => {
-        link.addEventListener("click", (e) => {
-          e.preventDefault();
-          const href = link.getAttribute("href");
-          const targetId = href.startsWith("#") ? href.slice(1) : null;
+      reader.onload = function (e) {
+        const picData = e.target.result;
+        // Sauvegarde dans localStorage
+        localStorage.setItem("profile", JSON.stringify({ desc, bts, bp, skz, pic: picData }));
+        document.getElementById("profileSavedMsg").innerText = "Profil sauvegardé ✅";
+        loadProfile(); // pour recharger l'affichage
+      };
 
-          if (targetId) {
-            sections.forEach(section => section.classList.remove("active"));
-            const targetSection = document.getElementById(targetId);
-            if (targetSection) {
-              targetSection.classList.add("active");
-            }
-          }
-        });
-      });
-    });
-
-    // -------------------- PUBLICATION DE POST --------------------
-    document.getElementById("postForm")?.addEventListener("submit", function(e) {
-      e.preventDefault();
-
-      const imageFile = document.getElementById("postImage").files[0];
-      const caption = document.getElementById("postCaption").value;
-
-      const postHtml = `
-        <div class="post">
-          <img src="${URL.createObjectURL(imageFile)}" alt="Post Image" />
-          <p>${caption}</p>
-        </div>
-      `;
-
-      document.getElementById("postsList").innerHTML += postHtml;
-      document.getElementById("postForm").reset();
-    });
-
-    // -------------------- CHAT --------------------
-    let messages = [];
-
-    function sendMessage() {
-      const message = document.getElementById("messageInput").value;
-      if (message) {
-        messages.push(message);
-        updateChat();
-        document.getElementById("messageInput").value = "";
+      if (picFile) {
+        reader.readAsDataURL(picFile);
+      } else {
+        // Si pas de photo, récupérer celle qui existe déjà ou vide
+        const existing = JSON.parse(localStorage.getItem("profile") || "{}");
+        localStorage.setItem("profile", JSON.stringify({ desc, bts, bp, skz, pic: existing.pic || "" }));
+        document.getElementById("profileSavedMsg").innerText = "Profil sauvegardé ✅";
+        loadProfile();
       }
     }
 
-    function updateChat() {
-      const chatBox = document.getElementById("chatBox");
-      chatBox.innerHTML = messages.map(msg => `<p>${msg}</p>`).join('');
+    function loadProfile() {
+      const data = JSON.parse(localStorage.getItem("profile") || "{}");
+
+      if (data.desc) document.getElementById("profileDesc").value = data.desc;
+      if (data.pic) document.getElementById("profilePicPreview").src = data.pic;
+      document.getElementById("badgeBTS").checked = data.bts || false;
+      document.getElementById("badgeBLACKPINK").checked = data.bp || false;
+      document.getElementById("badgeStrayKids").checked = data.skz || false;
     }
 
-    // -------------------- AUTH (MAQUETTE) --------------------
-    function login() {
-      const email = document.getElementById("email").value;
-      const password = document.getElementById("password").value;
-      document.getElementById("auth-message").innerText = `Connecté avec ${email}`;
-    }
-
-    function signup() {
-      const email = document.getElementById("email").value;
-      document.getElementById("auth-message").innerText = `Compte créé pour ${email}`;
-    }
+    document.addEventListener("DOMContentLoaded", () => {
+      loadProfile(); // Charger les données du profil lorsque la page est prête
+    });
   </script>
 </body>
 </html>
