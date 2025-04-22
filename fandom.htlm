@@ -3,27 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fandom - BTS, Blackpink...</title>
+    <title>Fandoms - Seoulspace</title>
     <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
     <header>
-        <h1>Fandoms</h1>
+        <h1>Les Fandoms</h1>
+        <p>Choisissez votre groupe préféré et plongez dans l'univers de Seoulspace !</p>
     </header>
 
     <section class="fandoms">
         <div class="fandom">
             <h2>BTS</h2>
-            <img src="images/bts.jpg" alt="BTS">
-            <p>Rejoignez le fandom de BTS !</p>
-            <button><a href="bts.html">Découvrir</a></button>
+            <img src="images/bts.jpg" alt="BTS" class="fandom-image">
+            <p>Rejoignez le fandom de BTS, le groupe légendaire !</p>
+            <button><a href="bts.html">Découvrir BTS</a></button>
         </div>
         <div class="fandom">
             <h2>Blackpink</h2>
-            <img src="images/blackpink.jpg" alt="Blackpink">
-            <p>Rejoignez le fandom de Blackpink !</p>
-            <button><a href="blackpink.html">Découvrir</a></button>
+            <img src="images/blackpink.jpg" alt="Blackpink" class="fandom-image">
+            <p>Plongez dans l'univers de Blackpink, les reines de la K-pop !</p>
+            <button><a href="blackpink.html">Découvrir Blackpink</a></button>
+        </div>
+        <div class="fandom">
+            <h2>EXO</h2>
+            <img src="images/exo.jpg" alt="EXO" class="fandom-image">
+            <p>EXO, un groupe incontournable à découvrir !</p>
+            <button><a href="exo.html">Découvrir EXO</a></button>
         </div>
     </section>
+    
 </body>
 </html>
