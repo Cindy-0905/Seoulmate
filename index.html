@@ -16,6 +16,7 @@
       margin-right: 10px;
       text-decoration: none;
       color: #333;
+      cursor: pointer;
     }
     .section {
       display: none;
@@ -38,8 +39,12 @@
       min-height: 100px;
       margin-bottom: 10px;
     }
-    button {
-      margin-top: 10px;
+    .quiz-btn {
+      margin: 5px;
+      padding: 10px;
+      background-color: #f0f0f0;
+      border: 1px solid #ccc;
+      cursor: pointer;
     }
   </style>
 </head>
@@ -53,11 +58,9 @@
     <a href="#accueil">Accueil</a>
     <a href="#profil">Mon Profil</a>
     <a href="#chat">Chat</a>
-    <a href="#quiz">Quiz</a>
     <a href="#connexion">Connexion</a>
+    <a href="#quiz">Quiz</a>
     <a href="#fonctionnalites">Fonctionnalités</a>
-    <a href="#evenements">Événements</a>
-    <a href="#shop">Shop</a>
   </nav>
 
   <main>
@@ -89,16 +92,6 @@
       <button onclick="sendMessage()">Envoyer</button>
     </section>
 
-    <section id="quiz" class="section">
-      <h2>Quiz K-pop</h2>
-      <div id="quizContainer">
-        <p id="quizQuestion"></p>
-        <div id="quizOptions"></div>
-        <button onclick="nextQuestion()">Question Suivante</button>
-        <p id="quizResult"></p>
-      </div>
-    </section>
-
     <section id="connexion" class="section">
       <h2>Connexion / Inscription</h2>
       <input type="email" id="email" placeholder="Email" /><br>
@@ -108,25 +101,22 @@
       <p id="auth-message"></p>
     </section>
 
+    <section id="quiz" class="section">
+      <h2>Quiz K-pop</h2>
+      <div id="quizQuestion"></div>
+      <div id="quizOptions"></div>
+      <button onclick="nextQuestion()">Question suivante</button>
+      <p id="quizResult"></p>
+    </section>
+
     <section id="fonctionnalites" class="section">
       <h2>Fonctionnalités</h2>
       <ul>
         <li>Créer un profil avec photo, badges, et description</li>
         <li>Chatter en public, privé ou en groupe</li>
-        <li>Voir et créer des événements</li>
-        <li>Faire des quiz pour gagner des badges</li>
-        <li>Accès à une boutique K-pop</li>
+        <li>Participer à des quiz K-pop pour gagner des badges</li>
+        <li>Système anti-insulte intégré pour le chat</li>
       </ul>
-    </section>
-
-    <section id="evenements" class="section">
-      <h2>Événements à venir</h2>
-      <p>Notez vos meet-ups et concerts ici !</p>
-    </section>
-
-    <section id="shop" class="section">
-      <h2>Shop K-pop</h2>
-      <p>Affichez vos produits favoris ici !</p>
     </section>
   </main>
 
@@ -134,21 +124,54 @@
     <p>&copy; 2025 Seoulmate — Créé avec amour 💖</p>
   </footer>
 
-  <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth.js"></script>
   <script>
-    const firebaseConfig = {
-      apiKey: "AIzaSyBlWL7pLWVIXhmLP-b3dTOmbxEwAyWvhto",
-      authDomain: "seoulmate-d34c2.firebaseapp.com",
-      projectId: "seoulmate-d34c2",
-      storageBucket: "seoulmate-d34c2.firebasestorage.app",
-      messagingSenderId: "570003400199",
-      appId: "1:570003400199:web:08cfd5b4f6fa82b2ea6ca2",
-      measurementId: "G-8MV4ZWQ8SF"
-    };
+    const quizData = [
+      {
+        question: "Quel groupe a sorti la chanson 'Dynamite' ?",
+        options: ["BTS", "EXO", "BLACKPINK", "NCT"],
+        answer: "BTS"
+      },
+      {
+        question: "Quelle membre de BLACKPINK est née en Australie ?",
+        options: ["Lisa", "Jennie", "Rosé", "Jisoo"],
+        answer: "Rosé"
+      }
+    ];
 
-    const app = firebase.initializeApp(firebaseConfig);
-    const auth = firebase.auth();
+    let quizIndex = 0;
+    let score = 0;
+
+    function loadQuestion() {
+      const questionEl = document.getElementById("quizQuestion");
+      const optionsEl = document.getElementById("quizOptions");
+
+      const current = quizData[quizIndex];
+      questionEl.innerText = current.question;
+      optionsEl.innerHTML = "";
+
+      current.options.forEach(opt => {
+        const btn = document.createElement("button");
+        btn.innerText = opt;
+        btn.classList.add("quiz-btn");
+        btn.onclick = () => {
+          if (opt === current.answer) {
+            score++;
+          }
+          document.getElementById("quizResult").innerText = `Score: ${score}/${quizData.length}`;
+        };
+        optionsEl.appendChild(btn);
+      });
+    }
+
+    function nextQuestion() {
+      quizIndex++;
+      if (quizIndex < quizData.length) {
+        loadQuestion();
+      } else {
+        document.getElementById("quizQuestion").innerText = "Quiz terminé !";
+        document.getElementById("quizOptions").innerHTML = "";
+      }
+    }
 
     function saveProfile() {
       const desc = document.getElementById("profileDesc").value;
@@ -184,115 +207,58 @@
       document.getElementById("badgeStrayKids").checked = data.skz || false;
     }
 
+    const badWords = ["insulte1", "insulte2", "autre"]; // remplace par des mots interdits
     let messages = [];
-    const bannedWords = ["con", "pute", "merde", "enculé", "fuck", "shit", "salopard"];
-
-    function filterBadWords(msg) {
-      return msg
-        .split(" ")
-        .map(word => bannedWords.includes(word.toLowerCase()) ? "***" : word)
-        .join(" ");
-    }
 
     function sendMessage() {
-      const input = document.getElementById("messageInput");
-      const message = input.value.trim();
-      if (message) {
-        messages.push(filterBadWords(message));
-        updateChat();
-        input.value = "";
-      }
+      let msg = document.getElementById("messageInput").value;
+      if (!msg) return;
+
+      badWords.forEach(w => {
+        const regex = new RegExp(w, "gi");
+        msg = msg.replace(regex, "***");
+      });
+
+      messages.push(msg);
+      updateChat();
+      document.getElementById("messageInput").value = "";
     }
 
     function updateChat() {
-      document.getElementById("chatBox").innerHTML = messages.map(m => `<p>${m}</p>`).join("");
+      const chatBox = document.getElementById("chatBox");
+      chatBox.innerHTML = messages.map(msg => `<p>${msg}</p>`).join('');
     }
 
     function login() {
       const email = document.getElementById("email").value;
       const password = document.getElementById("password").value;
-      auth.signInWithEmailAndPassword(email, password)
-        .then(() => document.getElementById("auth-message").innerText = `Connecté avec ${email}`)
-        .catch((e) => document.getElementById("auth-message").innerText = e.message);
+      alert(`Connexion simulée avec ${email}`); // à remplacer avec Firebase
     }
 
     function signup() {
       const email = document.getElementById("email").value;
       const password = document.getElementById("password").value;
-      auth.createUserWithEmailAndPassword(email, password)
-        .then(() => document.getElementById("auth-message").innerText = `Compte créé pour ${email}`)
-        .catch((e) => document.getElementById("auth-message").innerText = e.message);
-    }
-
-    const quizData = [
-      {
-        question: "Quel groupe a sorti 'Dynamite' ?",
-        options: ["EXO", "BTS", "TWICE", "ATEEZ"],
-        answer: "BTS"
-      },
-      {
-        question: "Quel est le nom du fandom de BLACKPINK ?",
-        options: ["BLINK", "ARMY", "ONCE", "STAY"],
-        answer: "BLINK"
-      },
-      {
-        question: "Stray Kids a été formé par quel label ?",
-        options: ["SM", "JYP", "YG", "BigHit"],
-        answer: "JYP"
-      }
-    ];
-
-    let quizIndex = 0;
-    let score = 0;
-
-    function loadQuestion() {
-      const q = quizData[quizIndex];
-      document.getElementById("quizQuestion").innerText = q.question;
-      const container = document.getElementById("quizOptions");
-      container.innerHTML = "";
-      q.options.forEach(opt => {
-        const btn = document.createElement("button");
-        btn.textContent = opt;
-        btn.onclick = () => checkAnswer(opt);
-        container.appendChild(btn);
-      });
-    }
-
-    function checkAnswer(opt) {
-      if (opt === quizData[quizIndex].answer) score++;
-      quizIndex++;
-      if (quizIndex < quizData.length) {
-        loadQuestion();
-      } else {
-        showResult();
-      }
-    }
-
-    function nextQuestion() {
-      if (quizIndex < quizData.length) loadQuestion();
-    }
-
-    function showResult() {
-      let msg = "";
-      if (score === 3) msg = "✨ Ultra fan de K-POP ! Badge Or débloqué !";
-      else if (score === 2) msg = "💜 Fan confirmé·e ! Badge Argent débloqué !";
-      else msg = "🌱 Débutant·e ! Badge Bronze débloqué !";
-      document.getElementById("quizResult").innerText = `Score : ${score}/3\n${msg}`;
-      score = 0;
-      quizIndex = 0;
+      alert(`Inscription simulée avec ${email}`); // à remplacer avec Firebase
     }
 
     document.addEventListener("DOMContentLoaded", () => {
       loadProfile();
-      loadQuestion();
       const sections = document.querySelectorAll(".section");
       const links = document.querySelectorAll("nav a");
+
       links.forEach(link => {
         link.addEventListener("click", (e) => {
           e.preventDefault();
           const targetId = link.getAttribute("href").substring(1);
           sections.forEach(sec => sec.classList.remove("active"));
           document.getElementById(targetId).classList.add("active");
+
+          if (targetId === "quiz") {
+            quizIndex = 0;
+            score = 0;
+            loadQuestion();
+            document.getElementById("quizResult").innerText = "";
+          }
         });
       });
     });
