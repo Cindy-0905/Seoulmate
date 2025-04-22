@@ -1,18 +1,31 @@
-// script.js
-// Gérer la navigation entre les sections
-document.querySelectorAll("nav a").forEach(link => {
-  link.addEventListener("click", function(e) {
-    e.preventDefault();
-    let sectionId = this.getAttribute("href").substring(1); // récupère l'ID de la section
-    document.querySelectorAll(".section").forEach(section => {
-      section.classList.remove("active");
+// -------------------- NAVIGATION ENTRE SECTIONS --------------------
+document.addEventListener("DOMContentLoaded", () => {
+  const sections = document.querySelectorAll(".section");
+  const links = document.querySelectorAll("nav a");
+
+  links.forEach(link => {
+    link.addEventListener("click", (e) => {
+      e.preventDefault();
+
+      const href = link.getAttribute("href");
+      const targetId = href.startsWith("#") ? href.slice(1) : null;
+
+      if (targetId) {
+        sections.forEach(section => section.classList.remove("active"));
+        const targetSection = document.getElementById(targetId);
+        if (targetSection) {
+          targetSection.classList.add("active");
+        }
+      }
     });
-    document.getElementById(sectionId).classList.add("active");
   });
+
+  // Activer par défaut la section "accueil" au chargement
+  document.querySelector(".section").classList.add("active");
 });
 
-// Publier un post
-document.getElementById("postForm").addEventListener("submit", function(e) {
+// -------------------- PUBLICATION DE POST --------------------
+document.getElementById("postForm")?.addEventListener("submit", function(e) {
   e.preventDefault();
 
   const imageFile = document.getElementById("postImage").files[0];
@@ -26,19 +39,18 @@ document.getElementById("postForm").addEventListener("submit", function(e) {
   `;
 
   document.getElementById("postsList").innerHTML += postHtml;
-
-  // Réinitialiser le formulaire après la soumission
   document.getElementById("postForm").reset();
 });
 
-// Chat en temps réel
+// -------------------- CHAT SIMPLIFIÉ --------------------
 let messages = [];
+
 function sendMessage() {
   const message = document.getElementById("messageInput").value;
   if (message) {
     messages.push(message);
     updateChat();
-    document.getElementById("messageInput").value = ""; // Réinitialiser le champ
+    document.getElementById("messageInput").value = "";
   }
 }
 
@@ -46,31 +58,3 @@ function updateChat() {
   const chatBox = document.getElementById("chatBox");
   chatBox.innerHTML = messages.map(msg => `<p>${msg}</p>`).join('');
 }
-document.addEventListener("DOMContentLoaded", () => {
-  const sections = document.querySelectorAll(".section");
-  const links = document.querySelectorAll("nav a");
-
-  links.forEach(link => {
-    link.addEventListener("click", (e) => {
-      e.preventDefault(); // empêche le changement de page
-
-      const targetId = link.getAttribute("id").replace("-link", "");
-      const targetSection = document.getElementById(targetId);
-
-      if (targetSection) {
-        // cacher toutes les sections
-        sections.forEach(section => section.classList.remove("active"));
-        // afficher la bonne
-        targetSection.classList.add("active");
-      }
-    });
-  });
-});
-.section {
-  display: none;
-}
-
-.section.active {
-  display: block;
-}
-
