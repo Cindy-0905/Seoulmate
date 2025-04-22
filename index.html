@@ -62,7 +62,26 @@
     <a href="#chat">Chat</a>
     <a href="profil.html">Mon Profil</a>
   </nav>
+<!-- Mon Profil -->
+<section id="profil" class="section">
+  <h2>Mon Profil</h2>
 
+  <label>Photo de profil :</label><br />
+  <input type="file" id="profilePicInput" accept="image/*" /><br />
+  <img id="profilePicPreview" src="" alt="Photo de profil" style="max-width: 150px; margin: 10px 0;" /><br />
+
+  <label>Description :</label><br />
+  <textarea id="profileDesc" placeholder="Parle un peu de toi..."></textarea><br />
+
+  <label>Badges :</label><br />
+  <input type="checkbox" id="badgeBTS" /> Fan de BTS<br />
+  <input type="checkbox" id="badgeBLACKPINK" /> Fan de BLACKPINK<br />
+  <input type="checkbox" id="badgeStrayKids" /> Fan de Stray Kids<br />
+
+  <button onclick="saveProfile()">Sauvegarder</button>
+  <p id="profileSavedMsg" style="color: green;"></p>
+</section>
+  
   <main>
     <!-- Accueil -->
     <section id="accueil" class="section active">
