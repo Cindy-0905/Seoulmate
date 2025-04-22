@@ -6,6 +6,64 @@
   <title>Seoulmate — Find people like you</title>
   <link rel="stylesheet" href="css/styles.css" />
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&display=swap" rel="stylesheet" />
+  <script type="module">
+    // --- CONFIG FIREBASE ---
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
+    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "YOUR_API_KEY",
+      authDomain: "YOUR_AUTH_DOMAIN",
+      projectId: "YOUR_PROJECT_ID",
+      storageBucket: "YOUR_STORAGE_BUCKET",
+      messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+      appId: "YOUR_APP_ID"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const provider = new GoogleAuthProvider();
+
+    window.signup = function() {
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+      createUserWithEmailAndPassword(auth, email, password)
+        .then(userCredential => {
+          document.getElementById("auth-message").innerText = `Compte créé pour ${email}`;
+        })
+        .catch(error => {
+          document.getElementById("auth-message").innerText = error.message;
+        });
+    }
+
+    window.login = function() {
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+      signInWithEmailAndPassword(auth, email, password)
+        .then(userCredential => {
+          document.getElementById("auth-message").innerText = `Connecté avec ${email}`;
+        })
+        .catch(error => {
+          document.getElementById("auth-message").innerText = error.message;
+        });
+    }
+
+    window.googleLogin = function() {
+      signInWithPopup(auth, provider)
+        .then(result => {
+          document.getElementById("auth-message").innerText = `Connecté avec Google : ${result.user.email}`;
+        })
+        .catch(error => {
+          document.getElementById("auth-message").innerText = error.message;
+        });
+    }
+
+    onAuthStateChanged(auth, user => {
+      if (user) {
+        document.getElementById("auth-message").innerText = `Connecté en tant que ${user.email}`;
+      }
+    });
+  </script>
   <style>
     body {
       font-family: 'Nunito', sans-serif;
@@ -57,13 +115,11 @@
   </nav>
 
   <main>
-    <!-- Accueil -->
     <section id="accueil" class="section active">
       <h2>Bienvenue sur Seoulmate</h2>
       <p>La plateforme qui connecte les fans de K-culture !</p>
     </section>
 
-    <!-- Profil -->
     <section id="profil" class="section">
       <h2>Mon Profil</h2>
       <label for="profileDesc">Description</label>
@@ -80,7 +136,6 @@
       <button onclick="saveProfile()">Sauvegarder</button>
     </section>
 
-    <!-- Chat -->
     <section id="chat" class="section">
       <h2>Chat public</h2>
       <div id="chatBox"></div>
@@ -88,17 +143,16 @@
       <button onclick="sendMessage()">Envoyer</button>
     </section>
 
-    <!-- Connexion -->
     <section id="connexion" class="section">
       <h2>Connexion / Inscription</h2>
       <input type="email" id="email" placeholder="Email" /><br>
       <input type="password" id="password" placeholder="Mot de passe" /><br>
       <button onclick="login()">Se connecter</button>
       <button onclick="signup()">S'inscrire</button>
+      <button onclick="googleLogin()">Connexion avec Google</button>
       <p id="auth-message"></p>
     </section>
 
-    <!-- Fonctionnalités -->
     <section id="fonctionnalites" class="section">
       <h2>Fonctionnalités</h2>
       <ul>
@@ -110,13 +164,11 @@
       </ul>
     </section>
 
-    <!-- Événements -->
     <section id="evenements" class="section">
       <h2>Événements à venir</h2>
       <p>Notez vos meet-ups et concerts ici !</p>
     </section>
 
-    <!-- Shop -->
     <section id="shop" class="section">
       <h2>Shop K-pop</h2>
       <p>Affichez vos produits favoris ici !</p>
@@ -173,17 +225,6 @@
     function updateChat() {
       const chatBox = document.getElementById("chatBox");
       chatBox.innerHTML = messages.map(msg => `<p>${msg}</p>`).join('');
-    }
-
-    function login() {
-      const email = document.getElementById("email").value;
-      const password = document.getElementById("password").value;
-      document.getElementById("auth-message").innerText = `Connecté avec ${email}`;
-    }
-
-    function signup() {
-      const email = document.getElementById("email").value;
-      document.getElementById("auth-message").innerText = `Compte créé pour ${email}`;
     }
 
     document.addEventListener("DOMContentLoaded", () => {
