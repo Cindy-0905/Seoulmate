@@ -1,44 +1,101 @@
 /* styles.css */
+
+/* Style général de la page */
 body {
-  font-family: Arial, sans-serif;
-  background-color: #f4f4f4;
-  margin: 0;
-  padding: 0;
+    font-family: 'Arial', sans-serif;
+    background-color: #f9f9f9; /* Un fond blanc très léger */
+    color: #333; /* Couleur du texte général */
+    margin: 0;
+    padding: 0;
 }
 
+/* Header */
 header {
-  background-color: #333;
-  color: white;
-  padding: 1em 0;
-  text-align: center;
+    background-color: #FFB6C1; /* Rose pâle */
+    color: white;
+    text-align: center;
+    padding: 50px 20px;
 }
 
-header nav ul {
-  list-style-type: none;
-  padding: 0;
+h1 {
+    font-size: 36px;
+    margin: 0;
+    font-family: 'Verdana', sans-serif;
 }
 
-header nav ul li {
-  display: inline;
-  margin: 0 10px;
+p {
+    font-size: 18px;
+    margin: 10px 0;
+    font-family: 'Arial', sans-serif;
 }
 
-header nav ul li a {
-  color: white;
-  text-decoration: none;
+/* Section Fandoms */
+section.fandoms {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 30px;
+    margin-top: 40px;
+    padding: 20px;
 }
 
-#intro {
-  padding: 20px;
-  text-align: center;
+/* Style pour chaque bloc de fandom */
+.fandom {
+    background-color: #ffffff; /* Fond blanc pour chaque carte */
+    border: 1px solid #f0f0f0; /* Légère bordure gris clair */
+    border-radius: 10px;
+    width: 300px;
+    padding: 20px;
+    text-align: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Ombre douce */
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-footer {
-  background-color: #333;
-  color: white;
-  text-align: center;
-  padding: 10px;
-  position: fixed;
-  bottom: 0;
-  width: 100%;
+.fandom:hover {
+    transform: translateY(-10px); /* Effet de survol */
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Ombre plus prononcée au survol */
+}
+
+.fandom h2 {
+    color: #FF69B4; /* Rose plus intense pour le titre */
+    font-size: 24px;
+    font-family: 'Verdana', sans-serif;
+    margin-bottom: 10px;
+}
+
+.fandom p {
+    color: #777; /* Gris pour le texte */
+    font-size: 16px;
+}
+
+.fandom .fandom-image {
+    width: 100%;
+    height: auto;
+    border-radius: 10px;
+    margin-bottom: 20px;
+}
+
+/* Style des boutons */
+button {
+    background-color: #FFB6C1; /* Rose pâle */
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    cursor: pointer;
+    border-radius: 25px;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+}
+
+button a {
+    color: white;
+    text-decoration: none;
+}
+
+button:hover {
+    background-color: #FF69B4; /* Changement de couleur au survol */
+}
+
+button:active {
+    background-color: #FF1493; /* Un rose plus vif quand le bouton est cliqué */
 }
