@@ -60,28 +60,9 @@
     <a href="#shop">Shop</a>
     <a href="#connexion">Connexion</a>
     <a href="#chat">Chat</a>
-    <a href="profil.html">Mon Profil</a>
+    <a href="#profil">Mon Profil</a>  <!-- Lien vers la section profil -->
   </nav>
-<!-- Mon Profil -->
-<section id="profil" class="section">
-  <h2>Mon Profil</h2>
 
-  <label>Photo de profil :</label><br />
-  <input type="file" id="profilePicInput" accept="image/*" /><br />
-  <img id="profilePicPreview" src="" alt="Photo de profil" style="max-width: 150px; margin: 10px 0;" /><br />
-
-  <label>Description :</label><br />
-  <textarea id="profileDesc" placeholder="Parle un peu de toi..."></textarea><br />
-
-  <label>Badges :</label><br />
-  <input type="checkbox" id="badgeBTS" /> Fan de BTS<br />
-  <input type="checkbox" id="badgeBLACKPINK" /> Fan de BLACKPINK<br />
-  <input type="checkbox" id="badgeStrayKids" /> Fan de Stray Kids<br />
-
-  <button onclick="saveProfile()">Sauvegarder</button>
-  <p id="profileSavedMsg" style="color: green;"></p>
-</section>
-  
   <main>
     <!-- Accueil -->
     <section id="accueil" class="section active">
@@ -119,6 +100,18 @@
         <button onclick="login()">Se connecter</button>
         <button onclick="signup()">S'inscrire</button>
         <p id="auth-message"></p>
+      </div>
+    </section>
+
+    <!-- Mon Profil -->
+    <section id="profil" class="section">
+      <h2>Mon Profil</h2>
+      <p>Voici ton profil :</p>
+      <div id="profile-picture">
+        <!-- Ajouter l'image de profil ici -->
+      </div>
+      <div id="profile-description">
+        <!-- Ajouter une description de profil ici -->
       </div>
     </section>
 
@@ -217,56 +210,4 @@
     }
   </script>
 </body>
-  // -------------------- PROFIL --------------------
-function saveProfile() {
-  const desc = document.getElementById("profileDesc").value;
-  const bts = document.getElementById("badgeBTS").checked;
-  const bp = document.getElementById("badgeBLACKPINK").checked;
-  const skz = document.getElementById("badgeStrayKids").checked;
-  const picFile = document.getElementById("profilePicInput").files[0];
-
-  const reader = new FileReader();
-  reader.onload = function (e) {
-    const picData = e.target.result;
-
-    localStorage.setItem("profile", JSON.stringify({
-      desc,
-      bts,
-      bp,
-      skz,
-      pic: picData
-    }));
-
-    document.getElementById("profileSavedMsg").innerText = "Profil sauvegardé ✅";
-    loadProfile(); // pour recharger l'affichage
-  };
-
-  if (picFile) {
-    reader.readAsDataURL(picFile);
-  } else {
-    const existing = JSON.parse(localStorage.getItem("profile") || "{}");
-    localStorage.setItem("profile", JSON.stringify({
-      desc,
-      bts,
-      bp,
-      skz,
-      pic: existing.pic || ""
-    }));
-    document.getElementById("profileSavedMsg").innerText = "Profil sauvegardé ✅";
-    loadProfile();
-  }
-}
-
-function loadProfile() {
-  const data = JSON.parse(localStorage.getItem("profile") || "{}");
-  if (data.desc) document.getElementById("profileDesc").value = data.desc;
-  if (data.pic) document.getElementById("profilePicPreview").src = data.pic;
-  document.getElementById("badgeBTS").checked = data.bts || false;
-  document.getElementById("badgeBLACKPINK").checked = data.bp || false;
-  document.getElementById("badgeStrayKids").checked = data.skz || false;
-}
-
-document.addEventListener("DOMContentLoaded", () => {
-  loadProfile();
-});
 </html>
