@@ -6,64 +6,6 @@
   <title>Seoulmate — Find people like you</title>
   <link rel="stylesheet" href="css/styles.css" />
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&display=swap" rel="stylesheet" />
-  <script type="module">
-    // --- CONFIG FIREBASE ---
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
-    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-auth.js";
-
-    const firebaseConfig = {
-      apiKey: "YOUR_API_KEY",
-      authDomain: "YOUR_AUTH_DOMAIN",
-      projectId: "YOUR_PROJECT_ID",
-      storageBucket: "YOUR_STORAGE_BUCKET",
-      messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-      appId: "YOUR_APP_ID"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const provider = new GoogleAuthProvider();
-
-    window.signup = function() {
-      const email = document.getElementById("email").value;
-      const password = document.getElementById("password").value;
-      createUserWithEmailAndPassword(auth, email, password)
-        .then(userCredential => {
-          document.getElementById("auth-message").innerText = `Compte créé pour ${email}`;
-        })
-        .catch(error => {
-          document.getElementById("auth-message").innerText = error.message;
-        });
-    }
-
-    window.login = function() {
-      const email = document.getElementById("email").value;
-      const password = document.getElementById("password").value;
-      signInWithEmailAndPassword(auth, email, password)
-        .then(userCredential => {
-          document.getElementById("auth-message").innerText = `Connecté avec ${email}`;
-        })
-        .catch(error => {
-          document.getElementById("auth-message").innerText = error.message;
-        });
-    }
-
-    window.googleLogin = function() {
-      signInWithPopup(auth, provider)
-        .then(result => {
-          document.getElementById("auth-message").innerText = `Connecté avec Google : ${result.user.email}`;
-        })
-        .catch(error => {
-          document.getElementById("auth-message").innerText = error.message;
-        });
-    }
-
-    onAuthStateChanged(auth, user => {
-      if (user) {
-        document.getElementById("auth-message").innerText = `Connecté en tant que ${user.email}`;
-      }
-    });
-  </script>
   <style>
     body {
       font-family: 'Nunito', sans-serif;
@@ -115,11 +57,13 @@
   </nav>
 
   <main>
+    <!-- Accueil -->
     <section id="accueil" class="section active">
       <h2>Bienvenue sur Seoulmate</h2>
       <p>La plateforme qui connecte les fans de K-culture !</p>
     </section>
 
+    <!-- Profil -->
     <section id="profil" class="section">
       <h2>Mon Profil</h2>
       <label for="profileDesc">Description</label>
@@ -136,6 +80,7 @@
       <button onclick="saveProfile()">Sauvegarder</button>
     </section>
 
+    <!-- Chat -->
     <section id="chat" class="section">
       <h2>Chat public</h2>
       <div id="chatBox"></div>
@@ -143,16 +88,19 @@
       <button onclick="sendMessage()">Envoyer</button>
     </section>
 
+    <!-- Connexion -->
     <section id="connexion" class="section">
       <h2>Connexion / Inscription</h2>
       <input type="email" id="email" placeholder="Email" /><br>
       <input type="password" id="password" placeholder="Mot de passe" /><br>
       <button onclick="login()">Se connecter</button>
       <button onclick="signup()">S'inscrire</button>
-      <button onclick="googleLogin()">Connexion avec Google</button>
       <p id="auth-message"></p>
+      <!-- Connexion avec Google -->
+      <button id="googleLoginBtn">Connexion avec Google</button>
     </section>
 
+    <!-- Fonctionnalités -->
     <section id="fonctionnalites" class="section">
       <h2>Fonctionnalités</h2>
       <ul>
@@ -164,11 +112,13 @@
       </ul>
     </section>
 
+    <!-- Événements -->
     <section id="evenements" class="section">
       <h2>Événements à venir</h2>
       <p>Notez vos meet-ups et concerts ici !</p>
     </section>
 
+    <!-- Shop -->
     <section id="shop" class="section">
       <h2>Shop K-pop</h2>
       <p>Affichez vos produits favoris ici !</p>
@@ -179,7 +129,65 @@
     <p>&copy; 2025 Seoulmate — Créé avec amour 💖</p>
   </footer>
 
-  <script>
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/10.0.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.0.0/firebase-auth.js"></script>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-app.js";
+    import { getAuth, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBlWL7pLWVIXhmLP-b3dTOmbxEwAyWvhto",
+      authDomain: "seoulmate-d34c2.firebaseapp.com",
+      projectId: "seoulmate-d34c2",
+      storageBucket: "seoulmate-d34c2.firebasestorage.app",
+      messagingSenderId: "570003400199",
+      appId: "1:570003400199:web:08cfd5b4f6fa82b2ea6ca2",
+      measurementId: "G-8MV4ZWQ8SF"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const provider = new GoogleAuthProvider();
+
+    const googleBtn = document.getElementById("googleLoginBtn");
+    if (googleBtn) {
+      googleBtn.addEventListener("click", () => {
+        signInWithPopup(auth, provider)
+          .then((result) => {
+            const user = result.user;
+            alert(`Connecté en tant que : ${user.displayName} (${user.email})`);
+            // Enregistrer les infos de l'utilisateur dans localStorage
+            localStorage.setItem("user", JSON.stringify({
+              name: user.displayName,
+              email: user.email,
+              photo: user.photoURL
+            }));
+            // Afficher les infos dans le profil (optionnel)
+            loadProfile();
+          })
+          .catch((error) => {
+            console.error(error);
+            alert("Erreur lors de la connexion : " + error.message);
+          });
+      });
+    }
+
+    // Fonction de connexion
+    function login() {
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+      document.getElementById("auth-message").innerText = `Connecté avec ${email}`;
+    }
+
+    // Fonction d'inscription
+    function signup() {
+      const email = document.getElementById("email").value;
+      document.getElementById("auth-message").innerText = `Compte créé pour ${email}`;
+    }
+
+    // Sauvegarde du profil
     function saveProfile() {
       const desc = document.getElementById("profileDesc").value;
       const bts = document.getElementById("badgeBTS").checked;
@@ -203,15 +211,21 @@
       }
     }
 
+    // Chargement du profil depuis le localStorage
     function loadProfile() {
       const data = JSON.parse(localStorage.getItem("profile") || "{}");
+      const user = JSON.parse(localStorage.getItem("user") || "{}");
       if (data.desc) document.getElementById("profileDesc").value = data.desc;
       if (data.pic) document.getElementById("profilePicPreview").src = data.pic;
+      if (user.name) {
+        document.getElementById("profileDesc").placeholder = `Bienvenue, ${user.name}`;
+      }
       document.getElementById("badgeBTS").checked = data.bts || false;
       document.getElementById("badgeBLACKPINK").checked = data.bp || false;
       document.getElementById("badgeStrayKids").checked = data.skz || false;
     }
 
+    // Mise à jour du chat
     let messages = [];
     function sendMessage() {
       const message = document.getElementById("messageInput").value;
@@ -223,23 +237,4 @@
     }
 
     function updateChat() {
-      const chatBox = document.getElementById("chatBox");
-      chatBox.innerHTML = messages.map(msg => `<p>${msg}</p>`).join('');
-    }
-
-    document.addEventListener("DOMContentLoaded", () => {
-      loadProfile();
-      const sections = document.querySelectorAll(".section");
-      const links = document.querySelectorAll("nav a");
-      links.forEach(link => {
-        link.addEventListener("click", (e) => {
-          e.preventDefault();
-          const targetId = link.getAttribute("href").substring(1);
-          sections.forEach(section => section.classList.remove("active"));
-          document.getElementById(targetId).classList.add("active");
-        });
-      });
-    });
-  </script>
-</body>
-</html>
+      const chatBox = document.getElementById
