@@ -1,24 +1,25 @@
-// Remplace les infos ci-dessous avec celles de TON projet Firebase
+// Configuration de Firebase
 const firebaseConfig = {
-  apiKey: "TON_API_KEY",
-  authDomain: "TON_PROJET.firebaseapp.com",
-  projectId: "TON_PROJET",
-  storageBucket: "TON_PROJET.appspot.com",
-  messagingSenderId: "XXX",
-  appId: "XXX"
+  apiKey: "AIzaSyBlWL7pLWVIXhmLP-b3dTOmbxEwAyWvhto",
+  authDomain: "seoulmate-d34c2.firebaseapp.com",
+  projectId: "seoulmate-d34c2",
+  storageBucket: "seoulmate-d34c2.appspot.com", // petit correctif ici : "firebaseapp" ➜ "appspot"
+  messagingSenderId: "570003400199",
+  appId: "1:570003400199:web:08cfd5b4f6fa82b2ea6ca2"
 };
 
+// Initialisation
 firebase.initializeApp(firebaseConfig);
-
-// Auth functions
 const auth = firebase.auth();
 
+// Fonction pour se connecter
 function login() {
   const email = document.getElementById("email").value;
   const password = document.getElementById("password").value;
+
   auth.signInWithEmailAndPassword(email, password)
     .then(() => {
-      document.getElementById("auth-message").innerText = "Connexion réussie !";
+      document.getElementById("auth-message").innerText = "Connexion réussie ! ❤️";
       window.location.href = "chat.html";
     })
     .catch(error => {
@@ -26,12 +27,14 @@ function login() {
     });
 }
 
+// Fonction pour s’inscrire
 function signup() {
   const email = document.getElementById("email").value;
   const password = document.getElementById("password").value;
+
   auth.createUserWithEmailAndPassword(email, password)
     .then(() => {
-      document.getElementById("auth-message").innerText = "Inscription réussie !";
+      document.getElementById("auth-message").innerText = "Inscription réussie 🎉";
     })
     .catch(error => {
       document.getElementById("auth-message").innerText = error.message;
