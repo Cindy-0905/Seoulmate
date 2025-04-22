@@ -226,11 +226,16 @@
       loadProfile();
       const sections = document.querySelectorAll(".section");
       const links = document.querySelectorAll("nav a");
+      
       links.forEach(link => {
         link.addEventListener("click", (e) => {
           e.preventDefault();
           const targetId = link.getAttribute("href").substring(1);
+          
+          // Désactive toutes les sections
           sections.forEach(sec => sec.classList.remove("active"));
+          
+          // Active la section correspondant au lien
           document.getElementById(targetId).classList.add("active");
         });
       });
@@ -238,4 +243,3 @@
   </script>
 </body>
 </html>
-
