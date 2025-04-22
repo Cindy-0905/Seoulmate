@@ -12,10 +12,19 @@
       margin: 0;
       padding: 0;
     }
+    nav {
+      background: #f2f2f2;
+      padding: 10px;
+    }
     nav a {
       margin-right: 10px;
       text-decoration: none;
       color: #333;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    nav a:hover {
+      color: #e91e63;
     }
     .section {
       display: none;
@@ -37,10 +46,6 @@
       padding: 10px;
       min-height: 100px;
       margin-bottom: 10px;
-    }
-    .chat-message {
-      border-bottom: 1px solid #eee;
-      padding: 5px 0;
     }
   </style>
 </head>
@@ -135,23 +140,19 @@
   <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth.js"></script>
   <script>
-    // Initialisation de Firebase
     const firebaseConfig = {
-      apiKey: "AIzaSyBlWL7pLWVIXhmLP-b3dTOmbxEwAyWvhto", 
+      apiKey: "AIzaSyBlWL7pLWVIXhmLP-b3dTOmbxEwAyWvhto",
       authDomain: "seoulmate-d34c2.firebaseapp.com",
       projectId: "seoulmate-d34c2",
-      storageBucket: "seoulmate-d34c2.firebasestorage.app",
+      storageBucket: "seoulmate-d34c2.appspot.com",
       messagingSenderId: "570003400199",
       appId: "1:570003400199:web:08cfd5b4f6fa82b2ea6ca2",
       measurementId: "G-8MV4ZWQ8SF"
     };
 
-    // Initialisation de Firebase
     const app = firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
-    const db = firebase.firestore();
 
-    // Fonction pour sauvegarder le profil
     function saveProfile() {
       const desc = document.getElementById("profileDesc").value;
       const bts = document.getElementById("badgeBTS").checked;
@@ -162,8 +163,7 @@
 
       reader.onload = function (e) {
         const picData = e.target.result;
-        const profileData = { desc, bts, bp, skz, pic: picData };
-        localStorage.setItem("profile", JSON.stringify(profileData));
+        localStorage.setItem("profile", JSON.stringify({ desc, bts, bp, skz, pic: picData }));
         document.getElementById("profileSavedMsg").innerText = "Profil sauvegardé ✅";
         loadProfile();
       };
@@ -172,8 +172,7 @@
         reader.readAsDataURL(picFile);
       } else {
         const existing = JSON.parse(localStorage.getItem("profile") || "{}");
-        const profileData = { desc, bts, bp, skz, pic: existing.pic || "" };
-        localStorage.setItem("profile", JSON.stringify(profileData));
+        localStorage.setItem("profile", JSON.stringify({ desc, bts, bp, skz, pic: existing.pic || "" }));
         document.getElementById("profileSavedMsg").innerText = "Profil sauvegardé ✅";
         loadProfile();
       }
@@ -188,7 +187,6 @@
       document.getElementById("badgeStrayKids").checked = data.skz || false;
     }
 
-    // Chat
     let messages = [];
     function sendMessage() {
       const message = document.getElementById("messageInput").value;
@@ -201,10 +199,9 @@
 
     function updateChat() {
       const chatBox = document.getElementById("chatBox");
-      chatBox.innerHTML = messages.map(msg => `<div class="chat-message">${msg}</div>`).join('');
+      chatBox.innerHTML = messages.map(msg => `<p>${msg}</p>`).join('');
     }
 
-    // Connexion et Inscription
     function login() {
       const email = document.getElementById("email").value;
       const password = document.getElementById("password").value;
@@ -235,20 +232,21 @@
       loadProfile();
       const sections = document.querySelectorAll(".section");
       const links = document.querySelectorAll("nav a");
-      
+
       links.forEach(link => {
         link.addEventListener("click", (e) => {
           e.preventDefault();
           const targetId = link.getAttribute("href").substring(1);
-          
-          // Désactive toutes les sections
-          sections.forEach(sec => sec.classList.remove("active"));
-          
-          // Active la section correspondant au lien
-          document.getElementById(targetId).classList.add("active");
+          const targetSection = document.getElementById(targetId);
+
+          if (targetSection) {
+            sections.forEach(sec => sec.classList.remove("active"));
+            targetSection.classList.add("active");
+          }
         });
       });
     });
   </script>
 </body>
 </html>
+
