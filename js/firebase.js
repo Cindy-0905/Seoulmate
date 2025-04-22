@@ -1,78 +1,49 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Connexion - Seoulmate</title>
-  <link rel="stylesheet" href="css/styles.css" />
-  <style>
-    main {
-      max-width: 400px;
-      margin: 2rem auto;
-      background: #fff0f5;
-      padding: 2rem;
-      border-radius: 20px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-      text-align: center;
-    }
-    input {
-      width: 90%;
-      padding: 0.8rem;
-      margin: 0.5rem 0;
-      border: 1px solid #ccc;
-      border-radius: 10px;
-    }
-    button {
-      margin: 0.5rem;
-      padding: 0.6rem 1.2rem;
-      background-color: #ff69b4;
-      color: white;
-      border: none;
-      border-radius: 10px;
-      cursor: pointer;
-    }
-    button:hover {
-      background-color: #e91e63;
-    }
-    #auth-message {
-      margin-top: 1rem;
-      color: #e91e63;
-    }
-  </style>
-</head>
-<body>
-  <header>
-    <h1>Seoulmate</h1>
-    <p class="slogan">"Rejoins la communauté"</p>
-  </header>
+// Importer les fonctions nécessaires depuis le SDK Firebase v9
+import { initializeApp } from "firebase/app";
+import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "firebase/auth";
 
-  <nav>
-    <a href="index.html">Accueil</a>
-    <a href="fonctionnalites.html">Fonctionnalités</a>
-    <a href="evenements.html">Événements</a>
-    <a href="shop.html">Shop</a>
-    <a href="connexion.html">Connexion</a>
-    <a href="chat.html">Chat</a>
-  </nav>
+// Configuration de Firebase
+const firebaseConfig = {
+  apiKey: "AIzaSyBlWL7pLWVIXhmLP-b3dTOmbxEwAyWvhto",
+  authDomain: "seoulmate-d34c2.firebaseapp.com",
+  projectId: "seoulmate-d34c2",
+  storageBucket: "seoulmate-d34c2.appspot.com",
+  messagingSenderId: "570003400199",
+  appId: "1:570003400199:web:08cfd5b4f6fa82b2ea6ca2",
+  measurementId: "G-8MV4ZWQ8SF"
+};
 
-  <main>
-    <h2>Connexion / Inscription</h2>
-    <div id="auth">
-      <input type="email" id="email" placeholder="Email" required /><br>
-      <input type="password" id="password" placeholder="Mot de passe" required /><br>
-      <button onclick="login()">Se connecter</button>
-      <button onclick="signup()">S'inscrire</button>
-      <p id="auth-message"></p>
-    </div>
-  </main>
+// Initialiser Firebase
+const app = initializeApp(firebaseConfig);
 
-  <!-- Firebase -->
-  <!-- Charger la version compat de Firebase -->
-  <script src="https://www.gstatic.com/firebasejs/9.6.11/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.6.11/firebase-auth-compat.js"></script>
-  
-  <!-- Inclure ton fichier firebase.js -->
-  <script src="js/firebase.js"></script>
+// Obtenir une instance de l'authentification Firebase
+const auth = getAuth(app);
 
-</body>
-</html>
+// Fonction de connexion
+function login() {
+  const email = document.getElementById("email").value;
+  const password = document.getElementById("password").value;
+
+  signInWithEmailAndPassword(auth, email, password)
+    .then(() => {
+      document.getElementById("auth-message").innerText = "Connexion réussie ! ❤️";
+      window.location.href = "chat.html"; // Si connexion réussie, rediriger vers chat.html
+    })
+    .catch((error) => {
+      document.getElementById("auth-message").innerText = error.message;
+    });
+}
+
+// Fonction d'inscription
+function signup() {
+  const email = document.getElementById("email").value;
+  const password = document.getElementById("password").value;
+
+  createUserWithEmailAndPassword(auth, email, password)
+    .then(() => {
+      document.getElementById("auth-message").innerText = "Inscription réussie 🎉";
+    })
+    .catch((error) => {
+      document.getElementById("auth-message").innerText = error.message;
+    });
+}
