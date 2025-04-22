@@ -46,4 +46,24 @@ function updateChat() {
   const chatBox = document.getElementById("chatBox");
   chatBox.innerHTML = messages.map(msg => `<p>${msg}</p>`).join('');
 }
+document.addEventListener("DOMContentLoaded", () => {
+  const sections = document.querySelectorAll(".section");
+  const links = document.querySelectorAll("nav a");
+
+  links.forEach(link => {
+    link.addEventListener("click", (e) => {
+      e.preventDefault(); // empêche le changement de page
+
+      const targetId = link.getAttribute("id").replace("-link", "");
+      const targetSection = document.getElementById(targetId);
+
+      if (targetSection) {
+        // cacher toutes les sections
+        sections.forEach(section => section.classList.remove("active"));
+        // afficher la bonne
+        targetSection.classList.add("active");
+      }
+    });
+  });
+});
 
