@@ -28,6 +28,8 @@
     #profilePicPreview {
       max-width: 200px;
       margin-top: 10px;
+      border-radius: 8px;
+      object-fit: cover;
     }
     #profileSavedMsg {
       color: green;
@@ -38,6 +40,7 @@
       padding: 10px;
       min-height: 100px;
       margin-bottom: 10px;
+      overflow-y: auto;
     }
     .quiz-btn {
       margin: 5px;
@@ -45,6 +48,15 @@
       background-color: #f0f0f0;
       border: 1px solid #ccc;
       cursor: pointer;
+    }
+    .profile-form label {
+      display: block;
+      margin-bottom: 5px;
+    }
+    .profile-form textarea, .profile-form input {
+      width: 100%;
+      padding: 8px;
+      margin-bottom: 10px;
     }
   </style>
 </head>
@@ -73,18 +85,20 @@
 
     <section id="profil" class="section">
       <h2>Mon Profil</h2>
-      <label for="profileDesc">Description</label>
-      <textarea id="profileDesc" placeholder="Ajoutez une description..."></textarea>
-      <div>
-        <label><input type="checkbox" id="badgeBTS"> Fan de BTS</label><br>
-        <label><input type="checkbox" id="badgeBLACKPINK"> Fan de BLACKPINK</label><br>
-        <label><input type="checkbox" id="badgeStrayKids"> Fan de Stray Kids</label>
+      <div class="profile-form">
+        <label for="profileDesc">Description</label>
+        <textarea id="profileDesc" placeholder="Ajoutez une description..."></textarea>
+        <div>
+          <label><input type="checkbox" id="badgeBTS"> Fan de BTS</label><br>
+          <label><input type="checkbox" id="badgeBLACKPINK"> Fan de BLACKPINK</label><br>
+          <label><input type="checkbox" id="badgeStrayKids"> Fan de Stray Kids</label>
+        </div>
+        <label for="profilePicInput">Photo de Profil</label>
+        <input type="file" id="profilePicInput" accept="image/*" onchange="previewImage(event)">
+        <img id="profilePicPreview" src="" alt="Aperçu de la photo">
+        <p id="profileSavedMsg"></p>
+        <button onclick="saveProfile()">Sauvegarder</button>
       </div>
-      <label for="profilePicInput">Photo de Profil</label>
-      <input type="file" id="profilePicInput" accept="image/*">
-      <img id="profilePicPreview" src="" alt="Aperçu de la photo">
-      <p id="profileSavedMsg"></p>
-      <button onclick="saveProfile()">Sauvegarder</button>
     </section>
 
     <section id="chat" class="section">
@@ -121,7 +135,7 @@
       </ul>
     </section>
     
-     <section id="evenements" class="section">
+    <section id="evenements" class="section">
       <h2>Événements à venir</h2>
       <p>Notez vos meet-ups et concerts ici !</p>
     </section>
@@ -217,6 +231,19 @@
       document.getElementById("badgeBTS").checked = data.bts || false;
       document.getElementById("badgeBLACKPINK").checked = data.bp || false;
       document.getElementById("badgeStrayKids").checked = data.skz || false;
+    }
+
+    function previewImage(event) {
+      const file = event.target.files[0];
+      if (file && file.type.startsWith('image/')) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          document.getElementById("profilePicPreview").src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+      } else {
+        alert('Veuillez sélectionner une image valide');
+      }
     }
 
     const badWords = ["insulte1", "insulte2", "autre"]; // remplace par des mots interdits
