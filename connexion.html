@@ -1,3 +1,4 @@
+<!-- connexion.html -->
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -5,10 +6,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Connexion - Seoulmate</title>
   <link rel="stylesheet" href="css/styles.css" />
-  <script src="js/firebase.js" defer></script>
 </head>
 <body>
-
   <header>
     <h1>Seoulmate</h1>
     <p class="slogan">"Rejoins la communauté"</p>
@@ -34,9 +33,33 @@
     </div>
   </main>
 
-  <footer>
-    <p>&copy; 2025 Seoulmate — Créé avec amour 💖</p>
-  </footer>
+  <!-- Firebase auth login/signup -->
+  <script type="module">
+    import { auth } from './js/firebase.js';
+    import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'https://www.gstatic.com/firebasejs/9.6.11/firebase-auth.js';
 
+    const emailInput = document.getElementById('email');
+    const passwordInput = document.getElementById('password');
+    const message = document.getElementById('auth-message');
+
+    window.signup = async function () {
+      try {
+        await createUserWithEmailAndPassword(auth, emailInput.value, passwordInput.value);
+        message.textContent = "Inscription réussie !";
+      } catch (error) {
+        message.textContent = "Erreur : " + error.message;
+      }
+    }
+
+    window.login = async function () {
+      try {
+        await signInWithEmailAndPassword(auth, emailInput.value, passwordInput.value);
+        message.textContent = "Connexion réussie !";
+        window.location.href = "chat.html";
+      } catch (error) {
+        message.textContent = "Erreur : " + error.message;
+      }
+    }
+  </script>
 </body>
 </html>
