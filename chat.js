@@ -1,67 +1,48 @@
-// Firebase Configuration
-import { initializeApp } from 'firebase/app';
-import { getDatabase, ref, set, onValue } from 'firebase/database';
+// js/chat.js
+import { auth, db } from './firebase.js';
+import {
+  onAuthStateChanged,
+  signOut
+} from 'https://www.gstatic.com/firebasejs/9.6.11/firebase-auth.js';
 
-// Firebase Configuration Object
-const firebaseConfig = {
-  apiKey: 'your-api-key',
-  authDomain: 'your-auth-domain',
-  databaseURL: 'your-database-url',
-  projectId: 'your-project-id',
-  storageBucket: 'your-storage-bucket',
-  messagingSenderId: 'your-sender-id',
-  appId: 'your-app-id'
-};
+import {
+  ref,
+  push,
+  onChildAdded
+} from 'https://www.gstatic.com/firebasejs/9.6.11/firebase-database.js';
 
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const db = getDatabase(app);
-
-// DOM Elements
-const sendButton = document.getElementById('send-button');
+const messagesDiv = document.querySelector('.messages');
 const messageInput = document.getElementById('message');
-const messagesContainer = document.querySelector('.messages');
+const sendButton = document.getElementById('send-button');
 
-// Listen for new messages
-function listenForMessages() {
-  const messagesRef = ref(db, 'messages');
-  onValue(messagesRef, (snapshot) => {
-    const messages = snapshot.val();
-    displayMessages(messages);
-  });
-}
+onAuthStateChanged(auth, user => {
+  if (user) {
+    const userId = user.uid;
 
-// Display messages in chat box
-function displayMessages(messages) {
-  messagesContainer.innerHTML = ''; // Clear previous messages
-  for (const key in messages) {
-    if (messages.hasOwnProperty(key)) {
-      const message = messages[key];
-      const messageElement = document.createElement('div');
-      messageElement.textContent = `${message.user}: ${message.message}`;
-      messagesContainer.appendChild(messageElement);
-    }
+    sendButton.addEventListener('click', () => {
+      const text = messageInput.value.trim();
+      if (text !== "") {
+        const messageRef = ref(db, 'messages');
+        push(messageRef, {
+          text,
+          userId,
+          timestamp: Date.now()
+        });
+        messageInput.value = '';
+      }
+    });
+
+    const messageRef = ref(db, 'messages');
+    onChildAdded(messageRef, snapshot => {
+      const data = snapshot.val();
+      const msg = document.createElement('div');
+      msg.classList.add('message');
+      msg.textContent = `${data.userId.slice(0, 5)}: ${data.text}`;
+      messagesDiv.appendChild(msg);
+      messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    });
+
+  } else {
+    window.location.href = "connexion.html";
   }
-}
-
-// Send message to Firebase
-function sendMessage(user, messageText) {
-  const messageId = Date.now();
-  const messageRef = ref(db, 'messages/' + messageId);
-  set(messageRef, {
-    user: user,
-    message: messageText,
-    timestamp: messageId
-  });
-}
-
-// Event listener for sending messages
-sendButton.addEventListener('click', () => {
-  const messageText = messageInput.value;
-  const user = 'User1'; // Replace with actual logged-in user
-  sendMessage(user, messageText);
-  messageInput.value = ''; // Clear input field after sending
 });
-
-// Initialize message listener
-listenForMessages();
