@@ -13,6 +13,18 @@
     'https://lubnvnmoxilkbfpmpeyq.supabase.co',
     'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx1Ym52bm1veGlsa2JmcG1wZXlxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTAzMTMyNTAsImV4cCI6MjA2NTg4OTI1MH0.7gvE0IlNEp6mGVgKDK8VQOqHLbUL20AWaMfjq9rbyFU'
   );
+    <h2>Créer un compte</h2>
+<input id="signup-email" type="email" placeholder="Email">
+<input id="signup-password" type="password" placeholder="Mot de passe">
+<button onclick="signup()">S'inscrire</button>
+
+<h2>Se connecter</h2>
+<input id="login-email" type="email" placeholder="Email">
+<input id="login-password" type="password" placeholder="Mot de passe">
+<button onclick="login()">Se connecter</button>
+
+<button onclick="logout()">Se déconnecter</button>
+
 </script>
  body {
       font-family: 'Nunito', sans-serif;
@@ -306,6 +318,35 @@
             score = 0;
             loadQuestion();
             document.getElementById("quizResult").innerText = "";
+            <script>
+  async function signup() {
+    const email = document.getElementById('signup-email').value;
+    const password = document.getElementById('signup-password').value;
+    const { user, error } = await supabase.auth.signUp({ email, password });
+    if (error) {
+      alert("Erreur : " + error.message);
+    } else {
+      alert("Inscription réussie !");
+    }
+  }
+
+  async function login() {
+    const email = document.getElementById('login-email').value;
+    const password = document.getElementById('login-password').value;
+    const { user, error } = await supabase.auth.signInWithPassword({ email, password });
+    if (error) {
+      alert("Erreur : " + error.message);
+    } else {
+      alert("Connexion réussie !");
+    }
+  }
+
+  async function logout() {
+    await supabase.auth.signOut();
+    alert("Déconnecté !");
+  }
+</script>
+
           }
         });
       });
