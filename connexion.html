@@ -33,33 +33,9 @@
     </div>
   </main>
 
-  <!-- Firebase auth login/signup -->
-  <script type="module">
-    import { auth } from './js/firebase.js';
-    import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'https://www.gstatic.com/firebasejs/9.6.11/firebase-auth.js';
+  <script src="https://www.gstatic.com/firebasejs/9.6.11/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.11/firebase-auth.js"></script>
+  <script src="js/firebase.js"></script>
 
-    const emailInput = document.getElementById('email');
-    const passwordInput = document.getElementById('password');
-    const message = document.getElementById('auth-message');
-
-    window.signup = async function () {
-      try {
-        await createUserWithEmailAndPassword(auth, emailInput.value, passwordInput.value);
-        message.textContent = "Inscription réussie !";
-      } catch (error) {
-        message.textContent = "Erreur : " + error.message;
-      }
-    }
-
-    window.login = async function () {
-      try {
-        await signInWithEmailAndPassword(auth, emailInput.value, passwordInput.value);
-        message.textContent = "Connexion réussie !";
-        window.location.href = "chat.html";
-      } catch (error) {
-        message.textContent = "Erreur : " + error.message;
-      }
-    }
-  </script>
 </body>
 </html>
