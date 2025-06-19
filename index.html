@@ -4,7 +4,6 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Seoulmate — Find people like you</title>
-  <link rel="stylesheet" href="css/styles.css" />
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&display=swap" rel="stylesheet" />
   
   <!-- Style CSS -->
@@ -14,29 +13,35 @@
       margin: 0;
       padding: 0;
     }
+
     nav a {
       margin-right: 10px;
       text-decoration: none;
       color: #333;
       cursor: pointer;
     }
+
     .section {
       display: none;
       padding: 20px;
     }
+
     .section.active {
       display: block;
     }
+
     #profilePicPreview {
       max-width: 200px;
       margin-top: 10px;
       border-radius: 8px;
       object-fit: cover;
     }
+
     #profileSavedMsg {
       color: green;
       margin-top: 10px;
     }
+
     #chatBox {
       border: 1px solid #ccc;
       padding: 10px;
@@ -44,17 +49,12 @@
       margin-bottom: 10px;
       overflow-y: auto;
     }
-    .quiz-btn {
-      margin: 5px;
-      padding: 10px;
-      background-color: #f0f0f0;
-      border: 1px solid #ccc;
-      cursor: pointer;
-    }
+
     .profile-form label {
       display: block;
       margin-bottom: 5px;
     }
+
     .profile-form textarea, .profile-form input {
       width: 100%;
       padding: 8px;
@@ -70,6 +70,28 @@
       'https://lubnvnmoxilkbfpmpeyq.supabase.co',
       'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx1Ym52bm1veGlsa2JmcG1wZXlxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTAzMTMyNTAsImV4cCI6MjA2NTg4OTI1MH0.7gvE0IlNEp6mGVgKDK8VQOqHLbUL20AWaMfjq9rbyFU'
     );
+
+    // Fonction pour la gestion de la navigation entre les sections
+    document.addEventListener("DOMContentLoaded", () => {
+      const sections = document.querySelectorAll(".section");
+      const links = document.querySelectorAll("nav a");
+
+      links.forEach(link => {
+        link.addEventListener("click", (e) => {
+          e.preventDefault();
+          const targetId = link.getAttribute("href").substring(1);
+
+          // Masquer toutes les sections
+          sections.forEach(sec => sec.classList.remove("active"));
+
+          // Afficher la section correspondante
+          document.getElementById(targetId).classList.add("active");
+        });
+      });
+
+      // Charger le profil s'il existe dans le localStorage
+      loadProfile();
+    });
 
     // Fonction de connexion avec Supabase
     async function login() {
@@ -146,26 +168,6 @@
         alert('Veuillez sélectionner une image valide');
       }
     }
-
-    // Fonction pour gérer la navigation entre les sections
-    document.addEventListener("DOMContentLoaded", () => {
-      const sections = document.querySelectorAll(".section");
-      const links = document.querySelectorAll("nav a");
-
-      // Lorsqu'un lien est cliqué, afficher la section correspondante
-      links.forEach(link => {
-        link.addEventListener("click", (e) => {
-          e.preventDefault();
-          const targetId = link.getAttribute("href").substring(1);
-
-          // Masquer toutes les sections
-          sections.forEach(sec => sec.classList.remove("active"));
-          
-          // Afficher la section correspondante
-          document.getElementById(targetId).classList.add("active");
-        });
-      });
-    });
   </script>
 </head>
 <body>
