@@ -26,15 +26,15 @@
     <div id="auth">
       <input type="email" id="email" placeholder="Email" required /><br>
       <input type="password" id="password" placeholder="Mot de passe" required /><br>
-      <button onclick="login()">Se connecter</button>
-      <button onclick="signup()">S'inscrire</button>
+      <button onclick="loginUser()">Se connecter</button>
+      <button onclick="registerUser()">S'inscrire</button>
       <p id="auth-message"></p>
     </div>
   </main>
 
+  <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/9.6.11/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.6.11/firebase-auth.js"></script>
   <script src="js/firebase.js"></script>
-
 </body>
 </html>
