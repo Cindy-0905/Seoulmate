@@ -147,48 +147,22 @@
       }
     }
 
-    // Gestion des messages dans le chat
-    const badWords = ["insulte1", "insulte2", "autre"]; // remplace par des mots interdits
-    let messages = [];
-
-    function sendMessage() {
-      let msg = document.getElementById("messageInput").value;
-      if (!msg) return;
-
-      badWords.forEach(w => {
-        const regex = new RegExp(w, "gi");
-        msg = msg.replace(regex, "***");
-      });
-
-      messages.push(msg);
-      updateChat();
-      document.getElementById("messageInput").value = "";
-    }
-
-    function updateChat() {
-      const chatBox = document.getElementById("chatBox");
-      chatBox.innerHTML = messages.map(msg => `<p>${msg}</p>`).join('');
-    }
-
-    // Initialisation de l'application
+    // Fonction pour gérer la navigation entre les sections
     document.addEventListener("DOMContentLoaded", () => {
-      loadProfile();
       const sections = document.querySelectorAll(".section");
       const links = document.querySelectorAll("nav a");
 
+      // Lorsqu'un lien est cliqué, afficher la section correspondante
       links.forEach(link => {
         link.addEventListener("click", (e) => {
           e.preventDefault();
           const targetId = link.getAttribute("href").substring(1);
-          sections.forEach(sec => sec.classList.remove("active"));
-          document.getElementById(targetId).classList.add("active");
 
-          if (targetId === "quiz") {
-            quizIndex = 0;
-            score = 0;
-            loadQuestion();
-            document.getElementById("quizResult").innerText = "";
-          }
+          // Masquer toutes les sections
+          sections.forEach(sec => sec.classList.remove("active"));
+          
+          // Afficher la section correspondante
+          document.getElementById(targetId).classList.add("active");
         });
       });
     });
