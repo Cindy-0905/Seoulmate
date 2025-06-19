@@ -6,27 +6,10 @@
   <title>Seoulmate — Find people like you</title>
   <link rel="stylesheet" href="css/styles.css" />
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&display=swap" rel="stylesheet" />
+  
+  <!-- Style CSS -->
   <style>
-   <script src="https://unpkg.com/@supabase/supabase-js"></script>
-<script>
-  const supabase = supabase.createClient(
-    'https://lubnvnmoxilkbfpmpeyq.supabase.co',
-    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx1Ym52bm1veGlsa2JmcG1wZXlxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTAzMTMyNTAsImV4cCI6MjA2NTg4OTI1MH0.7gvE0IlNEp6mGVgKDK8VQOqHLbUL20AWaMfjq9rbyFU'
-  );
-    <h2>Créer un compte</h2>
-<input id="signup-email" type="email" placeholder="Email">
-<input id="signup-password" type="password" placeholder="Mot de passe">
-<button onclick="signup()">S'inscrire</button>
-
-<h2>Se connecter</h2>
-<input id="login-email" type="email" placeholder="Email">
-<input id="login-password" type="password" placeholder="Mot de passe">
-<button onclick="login()">Se connecter</button>
-
-<button onclick="logout()">Se déconnecter</button>
-
-</script>
- body {
+    body {
       font-family: 'Nunito', sans-serif;
       margin: 0;
       padding: 0;
@@ -78,6 +61,138 @@
       margin-bottom: 10px;
     }
   </style>
+
+  <!-- Script Supabase -->
+  <script src="https://unpkg.com/@supabase/supabase-js"></script>
+  <script>
+    // Configuration de Supabase
+    const supabase = supabase.createClient(
+      'https://lubnvnmoxilkbfpmpeyq.supabase.co',
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx1Ym52bm1veGlsa2JmcG1wZXlxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTAzMTMyNTAsImV4cCI6MjA2NTg4OTI1MH0.7gvE0IlNEp6mGVgKDK8VQOqHLbUL20AWaMfjq9rbyFU'
+    );
+
+    // Fonction de connexion avec Supabase
+    async function login() {
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+      const { user, error } = await supabase.auth.signInWithPassword({ email, password });
+
+      if (error) {
+        document.getElementById("auth-message").innerText = `Erreur de connexion : ${error.message}`;
+      } else {
+        document.getElementById("auth-message").innerText = `Bienvenue, ${user.email}!`;
+      }
+    }
+
+    // Fonction d'inscription avec Supabase
+    async function signup() {
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+      const { user, error } = await supabase.auth.signUp({ email, password });
+
+      if (error) {
+        document.getElementById("auth-message").innerText = `Erreur d'inscription : ${error.message}`;
+      } else {
+        document.getElementById("auth-message").innerText = `Inscription réussie, un email a été envoyé à ${user.email}!`;
+      }
+    }
+
+    // Fonction pour sauvegarder le profil
+    function saveProfile() {
+      const desc = document.getElementById("profileDesc").value;
+      const bts = document.getElementById("badgeBTS").checked;
+      const bp = document.getElementById("badgeBLACKPINK").checked;
+      const skz = document.getElementById("badgeStrayKids").checked;
+      const picFile = document.getElementById("profilePicInput").files[0];
+      const reader = new FileReader();
+
+      reader.onload = function (e) {
+        const picData = e.target.result;
+        localStorage.setItem("profile", JSON.stringify({ desc, bts, bp, skz, pic: picData }));
+        document.getElementById("profileSavedMsg").innerText = "Profil sauvegardé ✅";
+        loadProfile();
+      };
+
+      if (picFile) {
+        reader.readAsDataURL(picFile);
+      } else {
+        const existing = JSON.parse(localStorage.getItem("profile") || "{}");
+        localStorage.setItem("profile", JSON.stringify({ desc, bts, bp, skz, pic: existing.pic || "" }));
+        document.getElementById("profileSavedMsg").innerText = "Profil sauvegardé ✅";
+        loadProfile();
+      }
+    }
+
+    // Fonction pour charger le profil
+    function loadProfile() {
+      const data = JSON.parse(localStorage.getItem("profile") || "{}");
+      if (data.desc) document.getElementById("profileDesc").value = data.desc;
+      if (data.pic) document.getElementById("profilePicPreview").src = data.pic;
+      document.getElementById("badgeBTS").checked = data.bts || false;
+      document.getElementById("badgeBLACKPINK").checked = data.bp || false;
+      document.getElementById("badgeStrayKids").checked = data.skz || false;
+    }
+
+    // Fonction pour prévisualiser l'image
+    function previewImage(event) {
+      const file = event.target.files[0];
+      if (file && file.type.startsWith('image/')) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          document.getElementById("profilePicPreview").src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+      } else {
+        alert('Veuillez sélectionner une image valide');
+      }
+    }
+
+    // Gestion des messages dans le chat
+    const badWords = ["insulte1", "insulte2", "autre"]; // remplace par des mots interdits
+    let messages = [];
+
+    function sendMessage() {
+      let msg = document.getElementById("messageInput").value;
+      if (!msg) return;
+
+      badWords.forEach(w => {
+        const regex = new RegExp(w, "gi");
+        msg = msg.replace(regex, "***");
+      });
+
+      messages.push(msg);
+      updateChat();
+      document.getElementById("messageInput").value = "";
+    }
+
+    function updateChat() {
+      const chatBox = document.getElementById("chatBox");
+      chatBox.innerHTML = messages.map(msg => `<p>${msg}</p>`).join('');
+    }
+
+    // Initialisation de l'application
+    document.addEventListener("DOMContentLoaded", () => {
+      loadProfile();
+      const sections = document.querySelectorAll(".section");
+      const links = document.querySelectorAll("nav a");
+
+      links.forEach(link => {
+        link.addEventListener("click", (e) => {
+          e.preventDefault();
+          const targetId = link.getAttribute("href").substring(1);
+          sections.forEach(sec => sec.classList.remove("active"));
+          document.getElementById(targetId).classList.add("active");
+
+          if (targetId === "quiz") {
+            quizIndex = 0;
+            score = 0;
+            loadQuestion();
+            document.getElementById("quizResult").innerText = "";
+          }
+        });
+      });
+    });
+  </script>
 </head>
 <body>
   <header>
@@ -101,7 +216,6 @@
       <h2>Bienvenue sur Seoulmate</h2>
       <p>La plateforme qui connecte les fans de K-culture !</p>
       <img src="images/kpop.png" alt="Image K-pop" style="width: 300px; height: auto;">
-      
     </section>
 
     <section id="profil" class="section">
@@ -170,187 +284,5 @@
   <footer>
     <p>&copy; 2025 Seoulmate — Créé avec amour 💖</p>
   </footer>
-
-  <script>
-    const quizData = [
-      {
-        question: "Quel groupe a sorti la chanson 'Dynamite' ?",
-        options: ["BTS", "EXO", "BLACKPINK", "NCT"],
-        answer: "BTS"
-      },
-      {
-        question: "Quelle membre de BLACKPINK est née en Australie ?",
-        options: ["Lisa", "Jennie", "Rosé", "Jisoo"],
-        answer: "Rosé"
-      }
-    ];
-
-    let quizIndex = 0;
-    let score = 0;
-
-    function loadQuestion() {
-      const questionEl = document.getElementById("quizQuestion");
-      const optionsEl = document.getElementById("quizOptions");
-
-      const current = quizData[quizIndex];
-      questionEl.innerText = current.question;
-      optionsEl.innerHTML = "";
-
-      current.options.forEach(opt => {
-        const btn = document.createElement("button");
-        btn.innerText = opt;
-        btn.classList.add("quiz-btn");
-        btn.onclick = () => {
-          if (opt === current.answer) {
-            score++;
-          }
-          document.getElementById("quizResult").innerText = `Score: ${score}/${quizData.length}`;
-        };
-        optionsEl.appendChild(btn);
-      });
-    }
-
-    function nextQuestion() {
-      quizIndex++;
-      if (quizIndex < quizData.length) {
-        loadQuestion();
-      } else {
-        document.getElementById("quizQuestion").innerText = "Quiz terminé !";
-        document.getElementById("quizOptions").innerHTML = "";
-      }
-    }
-
-    function saveProfile() {
-      const desc = document.getElementById("profileDesc").value;
-      const bts = document.getElementById("badgeBTS").checked;
-      const bp = document.getElementById("badgeBLACKPINK").checked;
-      const skz = document.getElementById("badgeStrayKids").checked;
-      const picFile = document.getElementById("profilePicInput").files[0];
-      const reader = new FileReader();
-
-      reader.onload = function (e) {
-        const picData = e.target.result;
-        localStorage.setItem("profile", JSON.stringify({ desc, bts, bp, skz, pic: picData }));
-        document.getElementById("profileSavedMsg").innerText = "Profil sauvegardé ✅";
-        loadProfile();
-      };
-
-      if (picFile) {
-        reader.readAsDataURL(picFile);
-      } else {
-        const existing = JSON.parse(localStorage.getItem("profile") || "{}");
-        localStorage.setItem("profile", JSON.stringify({ desc, bts, bp, skz, pic: existing.pic || "" }));
-        document.getElementById("profileSavedMsg").innerText = "Profil sauvegardé ✅";
-        loadProfile();
-      }
-    }
-
-    function loadProfile() {
-      const data = JSON.parse(localStorage.getItem("profile") || "{}");
-      if (data.desc) document.getElementById("profileDesc").value = data.desc;
-      if (data.pic) document.getElementById("profilePicPreview").src = data.pic;
-      document.getElementById("badgeBTS").checked = data.bts || false;
-      document.getElementById("badgeBLACKPINK").checked = data.bp || false;
-      document.getElementById("badgeStrayKids").checked = data.skz || false;
-    }
-
-    function previewImage(event) {
-      const file = event.target.files[0];
-      if (file && file.type.startsWith('image/')) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-          document.getElementById("profilePicPreview").src = e.target.result;
-        };
-        reader.readAsDataURL(file);
-      } else {
-        alert('Veuillez sélectionner une image valide');
-      }
-    }
-
-    const badWords = ["insulte1", "insulte2", "autre"]; // remplace par des mots interdits
-    let messages = [];
-
-    function sendMessage() {
-      let msg = document.getElementById("messageInput").value;
-      if (!msg) return;
-
-      badWords.forEach(w => {
-        const regex = new RegExp(w, "gi");
-        msg = msg.replace(regex, "***");
-      });
-
-      messages.push(msg);
-      updateChat();
-      document.getElementById("messageInput").value = "";
-    }
-
-    function updateChat() {
-      const chatBox = document.getElementById("chatBox");
-      chatBox.innerHTML = messages.map(msg => `<p>${msg}</p>`).join('');
-    }
-
-    function login() {
-      const email = document.getElementById("email").value;
-      const password = document.getElementById("password").value;
-      alert(`Connexion simulée avec ${email}`); // à remplacer avec Firebase
-    }
-
-    function signup() {
-      const email = document.getElementById("email").value;
-      const password = document.getElementById("password").value;
-      alert(`Inscription simulée avec ${email}`); // à remplacer avec Firebase
-    }
-
-    document.addEventListener("DOMContentLoaded", () => {
-      loadProfile();
-      const sections = document.querySelectorAll(".section");
-      const links = document.querySelectorAll("nav a");
-
-      links.forEach(link => {
-        link.addEventListener("click", (e) => {
-          e.preventDefault();
-          const targetId = link.getAttribute("href").substring(1);
-          sections.forEach(sec => sec.classList.remove("active"));
-          document.getElementById(targetId).classList.add("active");
-
-          if (targetId === "quiz") {
-            quizIndex = 0;
-            score = 0;
-            loadQuestion();
-            document.getElementById("quizResult").innerText = "";
-            <script>
-  async function signup() {
-    const email = document.getElementById('signup-email').value;
-    const password = document.getElementById('signup-password').value;
-    const { user, error } = await supabase.auth.signUp({ email, password });
-    if (error) {
-      alert("Erreur : " + error.message);
-    } else {
-      alert("Inscription réussie !");
-    }
-  }
-
-  async function login() {
-    const email = document.getElementById('login-email').value;
-    const password = document.getElementById('login-password').value;
-    const { user, error } = await supabase.auth.signInWithPassword({ email, password });
-    if (error) {
-      alert("Erreur : " + error.message);
-    } else {
-      alert("Connexion réussie !");
-    }
-  }
-
-  async function logout() {
-    await supabase.auth.signOut();
-    alert("Déconnecté !");
-  }
-</script>
-
-          }
-        });
-      });
-    });
-  </script>
 </body>
 </html>
