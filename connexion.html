@@ -33,7 +33,22 @@
     </div>
   </main>
 
-  <!-- ✅ Ajout du script JS -->
-  <script src="js/auth.js"></script>
+  <!-- ✅ Script inclus directement -->
+  <script>
+    function login() {
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+
+      if (email === "test@seoulmate.com" && password === "1234") {
+        document.getElementById("auth-message").innerText = "Connexion réussie !";
+      } else {
+        document.getElementById("auth-message").innerText = "Email ou mot de passe incorrect.";
+      }
+    }
+
+    function signup() {
+      document.getElementById("auth-message").innerText = "Fonction d'inscription à venir.";
+    }
+  </script>
 </body>
 </html>
