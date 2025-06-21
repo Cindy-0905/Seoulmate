@@ -1,4 +1,4 @@
-chat.html -->
+<!-- chat.html -->
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -36,3 +36,45 @@ chat.html -->
   <footer>
     <p>&copy; 2025 Seoulmate — Créé avec amour 💖</p>
   </footer>
+
+</body>
+</html> déconnexion.html<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Connexion - Seoulmate</title>
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+  <header>
+    <h1>Seoulmate</h1>
+    <p class="slogan">"Rejoins la communauté"</p>
+  </header>
+
+  <nav>
+    <a href="index.html">Accueil</a>
+    <a href="fonctionnalites.html">Fonctionnalités</a>
+    <a href="evenements.html">Événements</a>
+    <a href="shop.html">Shop</a>
+    <a href="connexion.html">Connexion</a>
+    <a href="chat.html">Chat</a>
+  </nav>
+
+  <main>
+    <h2>Connexion / Inscription</h2>
+    <div id="auth">
+      <input type="email" id="email" placeholder="Email" required /><br>
+      <input type="password" id="password" placeholder="Mot de passe" required /><br>
+      <button onclick="login()">Se connecter</button>
+      <button onclick="signup()">S'inscrire</button>
+      <p id="auth-message"></p>
+    </div>
+  </main>
+
+  <script src="https://www.gstatic.com/firebasejs/9.6.11/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.11/firebase-auth.js"></script>
+  <script src="js/firebase.js"></script>
+
+</body>
+</html>
